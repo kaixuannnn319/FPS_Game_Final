@@ -76,10 +76,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        GroundCheck();
         Look();
         Move();
         Jump();
-        GroundCheck();
         Crouch();
         Gravity();
     }
@@ -104,7 +104,10 @@ public class PlayerController : MonoBehaviour
         Vector3 move = transform.right * horizontal + transform.forward * vertical;
 
         float speed = new Vector2(horizontal, vertical).magnitude;
-        animator.SetFloat("Speed", speed);
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", speed);
+        }
 
         float currentSpeed = moveSpeed;
         if(Input.GetKey(KeyCode.LeftShift))
@@ -131,7 +134,6 @@ public class PlayerController : MonoBehaviour
     private void GroundCheck()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        Debug.Log(isGrounded);
     }
 
     private void Jump()
@@ -152,6 +154,8 @@ public class PlayerController : MonoBehaviour
         {
             isCrouching = false;
             controller.height = standingHeight;
+            controller.center = new Vector3(0, crouchHeight / 2f, 0);
+            controller.center = new Vector3(0, standingHeight / 2f, 0);
         }
     }
 }
