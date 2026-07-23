@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class KeyPickup : MonoBehaviour, IInteractable
 {
+    [SerializeField] private string keyID;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -15,8 +16,9 @@ public class KeyPickup : MonoBehaviour, IInteractable
     }
     public void Interact(GameObject player)
     {
-
+        PlayerInventoryStub.Instance.CollectKey(keyID);
         Destroy(gameObject);
     }
 
 }
+
