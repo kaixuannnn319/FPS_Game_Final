@@ -1,13 +1,5 @@
 using UnityEngine;
 
-// Any damageable object (player, breakables, etc.) implements this.
-// If your player script already has a damage method, just make it implement
-// IDamageable instead of adding a new one.
-public interface IDamageable
-{
-    void TakeDamage(float amount);
-}
-
 // Put on the archer's arrow/projectile prefab.
 public class Projectile : MonoBehaviour
 {
@@ -21,9 +13,10 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out IDamageable target))
+        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
         {
-            target.TakeDamage(damage);
+            playerHealth.TakeDamage((int)damage);
             Destroy(gameObject);
         }
     }

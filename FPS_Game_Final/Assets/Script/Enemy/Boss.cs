@@ -27,4 +27,8 @@ public class Boss : MeleeGuard
         attackCooldown *= 0.7f; // attacks faster too
         // Optional: anim.SetTrigger("Enrage") if your model has a rage/roar animation
     }
+
+    // Boss uses a weapon hitbox (WeaponHitbox.cs) instead of the distance-check
+    // damage MeleeGuard uses — override DealDamage to do nothing so it can't double-hit.
+    public new void DealDamage() { }
 }
