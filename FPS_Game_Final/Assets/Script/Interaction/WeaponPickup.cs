@@ -12,7 +12,7 @@ public class WeaponPickup : MonoBehaviour, IInteractable
 
     public void Interact(GameObject player)
     {
-        Debug.Log("Picked up weapon: " + weaponType);
+        PlayerInventoryStub.Instance.CollectWeapon(weaponType);
         Destroy(gameObject);
     }
 }
