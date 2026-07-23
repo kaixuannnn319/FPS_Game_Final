@@ -1,0 +1,6 @@
+newmtl FerrisWood
+bump sakura_bark_nor_gl_1k.exr
+map_Kd sakura_bark_diff_1k.jpg
+Kd 1 1 1
+d 1
+
