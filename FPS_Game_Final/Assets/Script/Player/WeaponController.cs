@@ -6,72 +6,85 @@ public class WeaponController : MonoBehaviour
     private PlayerHealth playerHealth;
     private Camera playerCamera;
 
-    [Header("Weapon Stats")]
-    private WeaponLevel currentWeapon;
+    [Header("Current Weapon")]
+    private WeaponType currentWeaponType;
 
-    // Current Weapon Stats
+    [Header("Weapon Stats")]
     private int currentDamage;
     private float currentEnergyCost;
     private float fireCooldown;
 
-    // Fire Timer
+    [Header("Fire Timer")]
     private float nextFireTime;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         inventory = GetComponent<InventoryController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerCamera = Camera.main;
+
         UpdateWeaponStats();
     }
 
-    // Update is called once per frame
     void Update()
     {
         WeaponSwitch();
     }
+
     private void WeaponSwitch()
     {
+        // 1 = Knife
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if (inventory.SwitchWeapon(WeaponLevel.Knife))
+            if (inventory.SwitchWeapon(WeaponType.Knife))
             {
                 UpdateWeaponStats();
             }
         }
 
+        // 2 = Wand Level 1
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            if (inventory.SwitchWeapon(WeaponLevel.Level1Weapon))
+            if (inventory.SwitchWeapon(WeaponType.WandLevel1))
             {
                 UpdateWeaponStats();
             }
         }
 
+        // 3 = Wand Level 2
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            if (inventory.SwitchWeapon(WeaponLevel.Level2Weapon))
+            if (inventory.SwitchWeapon(WeaponType.WandLevel2))
             {
                 UpdateWeaponStats();
             }
         }
 
+        // 4 = Wand Level 3
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            if (inventory.SwitchWeapon(WeaponLevel.Level3Weapon))
+            if (inventory.SwitchWeapon(WeaponType.WandLevel3))
             {
                 UpdateWeaponStats();
             }
         }
     }
+
     private void UpdateWeaponStats()
     {
-        currentWeapon = inventory.GetCurrentWeapon();
+        currentWeaponType = inventory.GetCurrentWeaponType();
 
-        switch (currentWeapon)
+        switch (currentWeaponType)
         {
-            case WeaponLevel.Knife:
+            case WeaponType.None:
+
+                currentDamage = 0;
+                currentEnergyCost = 0;
+                fireCooldown = 0;
+
+                break;
+
+            case WeaponType.Knife:
 
                 currentDamage = 5;
                 currentEnergyCost = 0;
@@ -79,7 +92,7 @@ public class WeaponController : MonoBehaviour
 
                 break;
 
-            case WeaponLevel.Level1Weapon:
+            case WeaponType.WandLevel1:
 
                 currentDamage = 20;
                 currentEnergyCost = 5;
@@ -87,7 +100,7 @@ public class WeaponController : MonoBehaviour
 
                 break;
 
-            case WeaponLevel.Level2Weapon:
+            case WeaponType.WandLevel2:
 
                 currentDamage = 35;
                 currentEnergyCost = 10;
@@ -95,23 +108,16 @@ public class WeaponController : MonoBehaviour
 
                 break;
 
-            case WeaponLevel.Level3Weapon:
+            case WeaponType.WandLevel3:
 
                 currentDamage = 50;
                 currentEnergyCost = 20;
-                fireCooldown = 1f;
-
-                break;
-
-            default:
-
-                currentDamage = 0;
-                currentEnergyCost = 0;
-                fireCooldown = 0;
+                fireCooldown = 1.0f;
 
                 break;
         }
+
+        Debug.Log(
+            $"Current Weapon : {currentWeaponType} | Damage : {currentDamage} | Energy Cost : {currentEnergyCost}");
     }
 }
-
-

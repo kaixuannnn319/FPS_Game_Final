@@ -20,8 +20,15 @@ public class DoorController : MonoBehaviour, IInteractable
     public void Interact(GameObject player)
     {
         if (isOpen) return;
+        InventoryController inventory = player.GetComponent<InventoryController>();
 
-        if (PlayerInventoryStub.Instance.HasKey(requiredKeyID))
+        if (inventory == null)
+        {
+            Debug.LogError("InventoryController not found on Player!");
+            return;
+        }
+
+        if (inventory.HasKey(requiredKeyID))
         {
             isOpen = true;
             Debug.Log("Door opened with " + requiredKeyID);
@@ -31,10 +38,12 @@ public class DoorController : MonoBehaviour, IInteractable
         {
             Debug.Log("Locked - need " + requiredKeyID);
         }
+
     }
 
     private IEnumerator SlideDoor()
     {
+        
         float elapsed = 0f;
 
         while (elapsed < slideDuration)
