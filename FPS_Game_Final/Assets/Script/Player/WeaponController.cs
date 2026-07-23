@@ -5,6 +5,14 @@ public class WeaponController : MonoBehaviour
     private InventoryController inventory;
     private PlayerHealth playerHealth;
     private Camera playerCamera;
+    [Header("Knife")]
+    [SerializeField] private float knifeRange = 2f;
+
+    [Header("Weapon Models")]
+    [SerializeField] private GameObject knifeModel;
+    [SerializeField] private GameObject wandLevel1Model;
+    [SerializeField] private GameObject wandLevel2Model;
+    [SerializeField] private GameObject wandLevel3Model;
 
     [Header("Current Weapon")]
     private WeaponType currentWeaponType;
@@ -24,11 +32,14 @@ public class WeaponController : MonoBehaviour
         playerCamera = Camera.main;
 
         UpdateWeaponStats();
+        UpdateWeaponModel();
     }
 
     void Update()
     {
         WeaponSwitch();
+        Attack();
+
     }
 
     private void WeaponSwitch()
@@ -39,6 +50,7 @@ public class WeaponController : MonoBehaviour
             if (inventory.SwitchWeapon(WeaponType.Knife))
             {
                 UpdateWeaponStats();
+                UpdateWeaponModel();
             }
         }
 
@@ -48,6 +60,7 @@ public class WeaponController : MonoBehaviour
             if (inventory.SwitchWeapon(WeaponType.WandLevel1))
             {
                 UpdateWeaponStats();
+                UpdateWeaponModel();
             }
         }
 
@@ -57,6 +70,7 @@ public class WeaponController : MonoBehaviour
             if (inventory.SwitchWeapon(WeaponType.WandLevel2))
             {
                 UpdateWeaponStats();
+                UpdateWeaponModel();
             }
         }
 
@@ -66,6 +80,7 @@ public class WeaponController : MonoBehaviour
             if (inventory.SwitchWeapon(WeaponType.WandLevel3))
             {
                 UpdateWeaponStats();
+                UpdateWeaponModel();
             }
         }
     }
@@ -120,4 +135,115 @@ public class WeaponController : MonoBehaviour
         Debug.Log(
             $"Current Weapon : {currentWeaponType} | Damage : {currentDamage} | Energy Cost : {currentEnergyCost}");
     }
+
+    private void UpdateWeaponModel()
+    {
+        Debug.Log("UpdateWeaponModel : " + currentWeaponType);
+
+        knifeModel.SetActive(false);
+        wandLevel1Model.SetActive(false);
+
+        switch (currentWeaponType)
+        {
+            case WeaponType.Knife:
+
+                Debug.Log("Show Knife");
+                knifeModel.SetActive(true);
+                break;
+
+            case WeaponType.WandLevel1:
+
+                Debug.Log("Show Wand1");
+                wandLevel1Model.SetActive(true);
+                break;
+
+            case WeaponType.WandLevel2:
+
+                Debug.Log("Show Wand2");
+                wandLevel2Model.SetActive(true);
+                break;
+
+            case WeaponType.WandLevel3:
+
+                Debug.Log("Show Wand3");
+                wandLevel3Model.SetActive(true);
+                break;
+        }
+    }
+    public void RefreshWeapon()
+    {
+        UpdateWeaponStats();
+        UpdateWeaponModel();
+    }
+
+    private void Attack()
+    {
+        if (!Input.GetMouseButtonDown(0))
+            return;
+
+        if (Time.time < nextFireTime)
+            return;
+
+        nextFireTime = Time.time + fireCooldown;
+
+        switch (currentWeaponType)
+        {
+            case WeaponType.Knife:
+                KnifeAttack();
+                break;
+
+            case WeaponType.WandLevel1:
+                WandLevel1Attack();
+                break;
+
+            case WeaponType.WandLevel2:
+                WandLevel2Attack();
+                break;
+
+            case WeaponType.WandLevel3:
+                WandLevel3Attack();
+                break;
+        }
+    }
+    private void KnifeAttack()
+    {
+        Debug.Log("Knife Attack");
+
+        Ray ray = new Ray(
+            playerCamera.transform.position,
+            playerCamera.transform.forward);
+
+        Debug.DrawRay(
+            playerCamera.transform.position,
+            playerCamera.transform.forward * knifeRange,
+            Color.red,
+            1f);
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, knifeRange))
+        {
+            EnemyBase enemy = hit.collider.GetComponent<EnemyBase>();
+
+            if (enemy != null)
+            {
+                enemy.TakeDamage(currentDamage);
+
+                Debug.Log("Hit Enemy");
+            }
+        }
+    }
+    private void WandLevel1Attack()
+    {
+        Debug.Log("Wand Level 1 Attack");
+    }
+    private void WandLevel2Attack()
+    {
+        Debug.Log("Wand Level 2 Attack");
+    }
+    private void WandLevel3Attack()
+    {
+        Debug.Log("Wand Level 3 Attack");
+    }
+
 }

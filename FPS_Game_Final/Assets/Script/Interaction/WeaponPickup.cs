@@ -16,6 +16,16 @@ public class WeaponPickup : MonoBehaviour, IInteractable
         }
 
         inventory.UnlockWeapon(weaponType);
+        inventory.SwitchWeapon(WeaponType.Knife);
+
+        WeaponController weaponController =
+        player.GetComponent<WeaponController>();
+
+        if (weaponController != null)
+        {
+            weaponController.RefreshWeapon();
+        }
+
 
         Debug.Log("Picked up weapon : " + weaponType);
 
