@@ -14,11 +14,14 @@ public class KeyPickup : MonoBehaviour, IInteractable
     {
         
     }
+
     public void Interact(GameObject player)
     {
-        PlayerInventoryStub.Instance.CollectKey(keyID);
+        InventoryController inventory = player.GetComponent<InventoryController>();
+
+        inventory.CollectKey(keyID);
+
         Destroy(gameObject);
     }
-
 }
 

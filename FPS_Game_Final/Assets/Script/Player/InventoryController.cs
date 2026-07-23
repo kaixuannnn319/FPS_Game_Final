@@ -1,11 +1,12 @@
 using UnityEngine;
-public enum WeaponLevel
+using System.Collections.Generic;
+public enum WeaponType
 {
     None,
     Knife,
-    Level1Weapon,
-    Level2Weapon,
-    Level3Weapon
+    WandLevel1,
+    WandLevel2,
+    WandLevel3
 }
 
 public class InventoryController : MonoBehaviour
@@ -38,15 +39,19 @@ public class InventoryController : MonoBehaviour
 
     [Header("Weapon Unlock")]
     [SerializeField] private bool hasKnife = false;
-    [SerializeField] private bool hasLevel1Weapon = false;
-    [SerializeField] private bool hasLevel2Weapon = false;
-    [SerializeField] private bool hasLevel3Weapon = false;
+    [SerializeField] private bool hasWandLevel1 = false;
+    [SerializeField] private bool hasWandLevel2 = false;
+    [SerializeField] private bool hasWandLevel3 = false;
+    [SerializeField] private WeaponType currentWeaponType = WeaponType.None;
 
-    [SerializeField] private WeaponLevel currentWeapon = WeaponLevel.None;
 
     [Header("Quest Items")]
-    [SerializeField] private int keyCount = 0;
-    [SerializeField] private int relicCount = 0;
+    private List<string> collectedKeys = new List<string>();
+    [SerializeField] private bool hasKey1 = false;
+    [SerializeField] private bool hasKey2 = false;
+    [SerializeField] private bool hasKey3 = false;
+
+    [SerializeField] private int sealCount = 0;
     [SerializeField] private int buffCount = 0;
     [SerializeField] private int maxBuff = 3;
 
@@ -67,9 +72,9 @@ public class InventoryController : MonoBehaviour
         return buffCount;
     }
 
-    public WeaponLevel GetCurrentWeapon()
+    public WeaponType GetCurrentWeaponType()
     {
-        return currentWeapon;
+        return currentWeaponType;
     }
 
     public float GetLevel1Energy()
@@ -113,17 +118,17 @@ public class InventoryController : MonoBehaviour
 
     public bool HasLevel1Weapon()
     {
-        return hasLevel1Weapon;
+        return hasWandLevel1;
     }
 
     public bool HasLevel2Weapon()
     {
-        return hasLevel2Weapon;
+        return hasWandLevel2;
     }
 
     public bool HasLevel3Weapon()
     {
-        return hasLevel3Weapon;
+        return hasWandLevel3;
     }
 
     public int GetMaxBandage()
@@ -135,38 +140,34 @@ public class InventoryController : MonoBehaviour
     {
         return maxElixir;
     }
-    public int GetKeyCount()
-    {
-        return keyCount;
-    }
 
     public int GetRelicCount()
     {
-        return relicCount;
+        return sealCount;
     }
 
     public int GetMaxBuff()
     {
         return maxBuff;
     }
-    public void UnlockWeapon(WeaponLevel weapon)
+    public void UnlockWeapon(WeaponType weapon)
     {
         switch (weapon)
         {
-            case WeaponLevel.Knife:
+            case WeaponType.Knife:
                 hasKnife = true;
                 break;
 
-            case WeaponLevel.Level1Weapon:
-                hasLevel1Weapon = true;
+            case WeaponType.WandLevel1:
+                hasWandLevel1 = true;
                 break;
 
-            case WeaponLevel.Level2Weapon:
-                hasLevel2Weapon = true;
+            case WeaponType.WandLevel2:
+                hasWandLevel2 = true;
                 break;
 
-            case WeaponLevel.Level3Weapon:
-                hasLevel3Weapon = true;
+            case WeaponType.WandLevel3:
+                hasWandLevel3 = true;
                 break;
         }
 
@@ -175,29 +176,29 @@ public class InventoryController : MonoBehaviour
 
 
 
-    public bool SwitchWeapon(WeaponLevel weapon)
+    public bool SwitchWeapon(WeaponType weapon)
     {
         switch (weapon)
         {
-            case WeaponLevel.Knife:
+            case WeaponType.Knife:
                 if (!hasKnife) return false;
                 break;
 
-            case WeaponLevel.Level1Weapon:
-                if (!hasLevel1Weapon) return false;
+            case WeaponType.WandLevel1:
+                if (!hasWandLevel1) return false;
                 break;
 
-            case WeaponLevel.Level2Weapon:
-                if (!hasLevel2Weapon) return false;
+            case WeaponType.WandLevel2:
+                if (!hasWandLevel2) return false;
                 break;
 
-            case WeaponLevel.Level3Weapon:
-                if (!hasLevel3Weapon) return false;
+            case WeaponType.WandLevel3:
+                if (!hasWandLevel1) return false;
                 break;
         }
 
-        currentWeapon = weapon;
-        Debug.Log("Current Weapon : " + currentWeapon);
+        currentWeaponType = weapon;
+        Debug.Log("Current Weapon : " + currentWeaponType);
         return true;
     }
 
@@ -289,14 +290,40 @@ public class InventoryController : MonoBehaviour
         return true;
     }
 
-    public void AddKey()
-    {
-        keyCount++;
-    }
-
     public void AddRelic()
     {
-        relicCount++;
+        sealCount++;
     }
+
+    public void CollectKey(string keyID)
+    {
+        if (collectedKeys.Contains(keyID))
+            return;
+
+        collectedKeys.Add(keyID);
+
+        switch (keyID)
+        {
+            case "Key1":
+                hasKey1 = true;
+                break;
+
+            case "Key2":
+                hasKey2 = true;
+                break;
+
+            case "Key3":
+                hasKey3 = true;
+                break;
+        }
+
+        Debug.Log("Collected Key : " + keyID);
+    }
+
+    public bool HasKey(string keyID)
+    {
+        return collectedKeys.Contains(keyID);
+    }
+
 
 }
