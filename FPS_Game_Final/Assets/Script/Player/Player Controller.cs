@@ -143,19 +143,19 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
     }
-    private void Crouch()
+private void Crouch()
+{
+    if (Input.GetKey(KeyCode.LeftControl))
     {
-        if(Input.GetKey(KeyCode.LeftControl))
-        {
-            isCrouching = true;
-            controller.height = crouchHeight;
-        }
-        else
-        {
-            isCrouching = false;
-            controller.height = standingHeight;
-            controller.center = new Vector3(0, crouchHeight / 2f, 0);
-            controller.center = new Vector3(0, standingHeight / 2f, 0);
-        }
+        isCrouching = true;
+        controller.height = crouchHeight;
+        controller.center = new Vector3(0, crouchHeight / 2f, 0);
     }
+    else
+    {
+        isCrouching = false;
+        controller.height = standingHeight;
+        controller.center = new Vector3(0, standingHeight / 2f, 0);
+    }
+}
 }

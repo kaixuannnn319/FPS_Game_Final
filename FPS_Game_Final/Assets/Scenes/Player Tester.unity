@@ -1213,6 +1213,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5332271493688805397, guid: d032b22fdc6947b4490edd9495907916, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1476256074}
+    - targetCorrespondingSourceObject: {fileID: 5332271493688805397, guid: d032b22fdc6947b4490edd9495907916, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1476256075}
+    - targetCorrespondingSourceObject: {fileID: 5332271493688805397, guid: d032b22fdc6947b4490edd9495907916, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1476256077}
   m_SourcePrefab: {fileID: 100100000, guid: d032b22fdc6947b4490edd9495907916, type: 3}
 --- !u!1 &513625439
 GameObject:
@@ -2118,6 +2124,61 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
+  OnHealthChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPlayerDeath:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1476256075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476256067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6a630c8427c6784b9422c3d6d2ba760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryController
+  level1PickupAmount: 5
+  level2PickupAmount: 10
+  level3PickupAmount: 20
+  level1Energy: 100
+  level2Energy: 100
+  level3Energy: 100
+  level1ReserveEnergy: 0
+  level2ReserveEnergy: 0
+  level3ReserveEnergy: 0
+  maxLevel1ReserveEnergy: 100
+  maxLevel2ReserveEnergy: 200
+  maxLevel3ReserveEnergy: 200
+  bandageCount: 0
+  elixirCount: 0
+  maxBandage: 3
+  maxElixir: 1
+  hasKnife: 0
+  hasLevel1Weapon: 0
+  hasLevel2Weapon: 0
+  hasLevel3Weapon: 0
+  currentWeapon: 0
+  keyCount: 0
+  relicCount: 0
+  buffCount: 0
+  maxBuff: 3
+--- !u!114 &1476256077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476256067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42ddf0ba0e9c18c47832c83263cbf19b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponController
 --- !u!1 &1867722677
 GameObject:
   m_ObjectHideFlags: 0
