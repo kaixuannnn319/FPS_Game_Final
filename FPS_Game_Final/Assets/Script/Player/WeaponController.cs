@@ -140,35 +140,46 @@ public class WeaponController : MonoBehaviour
     {
         Debug.Log("UpdateWeaponModel : " + currentWeaponType);
 
-        knifeModel.SetActive(false);
-        wandLevel1Model.SetActive(false);
-        wandLevel2Model.SetActive(false);
-        wandLevel3Model.SetActive(false);
+        if (knifeModel != null)
+            knifeModel.SetActive(false);
+
+        if (wandLevel1Model != null)
+            wandLevel1Model.SetActive(false);
+
+        if (wandLevel2Model != null)
+            wandLevel2Model.SetActive(false);
+
+        if (wandLevel3Model != null)
+            wandLevel3Model.SetActive(false);
 
         switch (currentWeaponType)
         {
             case WeaponType.Knife:
 
-                Debug.Log("Show Knife");
-                knifeModel.SetActive(true);
+                if (knifeModel != null)
+                    knifeModel.SetActive(true);
+
                 break;
 
             case WeaponType.WandLevel1:
 
-                Debug.Log("Show Wand1");
-                wandLevel1Model.SetActive(true);
+                if (wandLevel1Model != null)
+                    wandLevel1Model.SetActive(true);
+
                 break;
 
             case WeaponType.WandLevel2:
 
-                Debug.Log("Show Wand2");
-                wandLevel2Model.SetActive(true);
+                if (wandLevel2Model != null)
+                    wandLevel2Model.SetActive(true);
+
                 break;
 
             case WeaponType.WandLevel3:
 
-                Debug.Log("Show Wand3");
-                wandLevel3Model.SetActive(true);
+                if (wandLevel3Model != null)
+                    wandLevel3Model.SetActive(true);
+
                 break;
         }
     }

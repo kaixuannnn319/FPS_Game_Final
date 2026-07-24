@@ -28,7 +28,7 @@ public class WeaponPickup : MonoBehaviour, IInteractable
 
 
         Debug.Log("Picked up weapon : " + weaponType);
-
+        Debug.Log("Destroy : " + gameObject.name);
         Destroy(gameObject);
     }
 }
