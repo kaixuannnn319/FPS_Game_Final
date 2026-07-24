@@ -12,13 +12,11 @@ public class BulletController : MonoBehaviour
     [Header("Effect")]
     [SerializeField] private GameObject impactEffect;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Destroy(gameObject, lifeTime);
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.position += transform.forward * moveSpeed * Time.deltaTime;
@@ -26,6 +24,8 @@ public class BulletController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Bullet Hit : " + other.name);
+
         EnemyBase enemy = other.GetComponent<EnemyBase>();
 
         if (enemy != null)
