@@ -16,6 +16,8 @@ public class MeleeGuard : EnemyBase
     [Header("Combat")]
     public float attackRange = 2f;
     public int attackVariantCount = 1; // set to how many attack animations you've wired up (e.g. 3)
+    public float attackAnimationLockTime = 2.5f; // total seconds the attack+rest animation takes — boss can't leave Attack state until this expires
+    private float lockTimer;
     public float attackCooldown = 1.5f;
     public float attackDamage = 15f;
     private float attackTimer;
@@ -65,17 +67,21 @@ public class MeleeGuard : EnemyBase
                 break;
 
             case State.Attack:
-                agent.SetDestination(transform.position); // stand still to attack
+                agent.isStopped = true; // fully stop, not just destination = self
                 FacePlayer();
-                if (DistanceToPlayer() > attackRange)
+                lockTimer -= Time.deltaTime;
+
+                if (lockTimer <= 0f && DistanceToPlayer() > attackRange)
                 {
+                    agent.isStopped = false;
                     currentState = State.Chase;
                 }
-                else if (attackTimer <= 0f)
+                else if (lockTimer <= 0f && attackTimer <= 0f)
                 {
                     anim.SetInteger(AttackIndexParam, Random.Range(0, attackVariantCount));
                     anim.SetTrigger(AttackParam);
                     attackTimer = attackCooldown;
+                    lockTimer = attackAnimationLockTime;
                     // Hook actual damage application to an Animation Event on the attack clip
                     // (call DealDamage() at the moment the weapon hits, not here directly)
                 }

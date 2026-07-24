@@ -14,8 +14,8 @@ public abstract class EnemyBase : MonoBehaviour
     [Header("Testing")]
     [Tooltip("If ON, enemy won't be Destroyed on death, so it can be revived with Respawn(). Turn OFF for real gameplay.")]
     public bool testMode = false;
-    private Vector3 spawnPosition;
-    private Quaternion spawnRotation;
+    protected Vector3 spawnPosition;
+    protected Quaternion spawnRotation;
 
     [Header("Item Drop")]
     [Tooltip("Prefab to spawn on death. Leave empty for no drop. Your teammate's pickup/interaction script should live on this prefab.")]
