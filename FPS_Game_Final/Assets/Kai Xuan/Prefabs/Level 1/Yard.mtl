@@ -1,0 +1,29 @@
+newmtl WoodenWall2
+bump raw_plank_wall_nor_gl_1k.exr
+map_Kd raw_plank_wall_diff_1k.jpg
+Kd 0.4824798 0.3998989 0.3998989
+d 1
+
+newmtl ProBuilderDefault
+map_Kd GridBox_Default.png
+Kd 1 1 1
+d 1
+
+newmtl GrassRoof
+bump NormalMap (3).png
+map_Kd grassroof.jpg
+Kd 1 1 1
+d 1
+
+newmtl Wood
+bump wood_table_worn_nor_gl_1k.exr
+map_Kd wood_table_worn_diff_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl Wood2
+bump wood_textured_concrete_nor_gl_1k.exr
+map_Kd wood_textured_concrete_diff_1k.jpg
+Kd 1 1 1
+d 1
+

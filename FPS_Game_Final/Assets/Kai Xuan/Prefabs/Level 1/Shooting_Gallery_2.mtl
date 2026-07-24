@@ -1,0 +1,26 @@
+newmtl M_Roof
+Kd 1.0 1.0 1.0
+d 1.0
+
+newmtl Wood
+bump wood_table_worn_nor_gl_1k.exr
+map_Kd wood_table_worn_diff_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl WoodTable
+bump fine_grained_wood_nor_gl_1k.exr
+map_Kd fine_grained_wood_col_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl M_Tileable_Wood_Trims_01
+Kd 1.0 1.0 1.0
+d 1.0
+
+newmtl WoodenWall
+bump wood_trunk_wall_nor_gl_1k.exr
+map_Kd wood_trunk_wall_diff_1k.jpg
+Kd 1 1 1
+d 1
+

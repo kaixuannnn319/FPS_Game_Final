@@ -1,0 +1,41 @@
+newmtl WoodTable
+bump fine_grained_wood_nor_gl_1k.exr
+map_Kd fine_grained_wood_col_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl Wood
+bump wood_table_worn_nor_gl_1k.exr
+map_Kd wood_table_worn_diff_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl Wood2
+bump wood_textured_concrete_nor_gl_1k.exr
+map_Kd wood_textured_concrete_diff_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl ProBuilderDefault
+map_Kd GridBox_Default.png
+Kd 1 1 1
+d 1
+
+newmtl Cloth
+bump fabric_pattern_07_nor_gl_1k.exr
+map_Kd fabric_pattern_07_col_1_1k.png
+Kd 1 1 1
+d 1
+
+newmtl RedCloth
+bump velour_velvet_nor_gl_1k.exr
+map_Kd velour_velvet_diff_1k.jpg
+Kd 0.671159 0.671159 0.671159
+d 1
+
+newmtl YellowMetal
+bump NormalMap.png
+map_Kd 2f40c11a-0832-4966-b6f1-6ea89a703330.jpg
+Kd 1 1 1
+d 1
+
