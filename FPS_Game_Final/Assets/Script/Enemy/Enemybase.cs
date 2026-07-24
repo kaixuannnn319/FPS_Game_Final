@@ -3,10 +3,9 @@ using UnityEngine.AI;
 
 // Shared logic for all enemy types: health, death, player detection, animator sync.
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Animator))]
 public abstract class EnemyBase : MonoBehaviour
 {
-    public enum State { Patrol, Chase, Attack, Dead }
+    public enum State { Patrol, Taunt, Chase, Attack, Dead }
 
     [Header("Stats")]
     public float maxHealth = 100f;
@@ -22,12 +21,13 @@ public abstract class EnemyBase : MonoBehaviour
     protected State currentState = State.Patrol;
     protected Transform player;
     protected NavMeshAgent agent;
-    protected Animator anim;
+    [SerializeField] protected Animator anim; // drag the CHILD model's Animator here manually
 
     // Animator parameter names — must match what you set up in the Animator Controller
     protected static readonly int SpeedParam = Animator.StringToHash("Speed");
     protected static readonly int AttackParam = Animator.StringToHash("Attack");
     protected static readonly int DieParam = Animator.StringToHash("Die");
+    protected static readonly int TauntParam = Animator.StringToHash("Taunt");
 
     protected virtual void OnEnable()
     {
@@ -49,7 +49,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
+        if (anim == null) anim = GetComponentInChildren<Animator>();
         currentHealth = maxHealth;
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");

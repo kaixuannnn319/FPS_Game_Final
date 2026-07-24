@@ -9,6 +9,10 @@ public class MeleeGuard : EnemyBase
     private int patrolIndex;
     private float waitTimer;
 
+    [Header("Taunt")]
+    public float tauntDuration = 1.2f; // matches the length of your taunt animation clip
+    private float tauntTimer;
+
     [Header("Combat")]
     public float attackRange = 2f;
     public float attackCooldown = 1.5f;
@@ -33,7 +37,22 @@ public class MeleeGuard : EnemyBase
         {
             case State.Patrol:
                 Patrol();
-                if (CanSeePlayer()) currentState = State.Chase;
+                if (CanSeePlayer())
+                {
+                    agent.isStopped = true;
+                    anim.SetTrigger(TauntParam);
+                    tauntTimer = tauntDuration;
+                    currentState = State.Taunt;
+                }
+                break;
+
+            case State.Taunt:
+                tauntTimer -= Time.deltaTime;
+                if (tauntTimer <= 0f)
+                {
+                    agent.isStopped = false;
+                    currentState = State.Chase;
+                }
                 break;
 
             case State.Chase:
@@ -91,8 +110,9 @@ public class MeleeGuard : EnemyBase
     {
         if (DistanceToPlayer() <= attackRange + 0.5f)
         {
-            // Replace with your actual player health/damage interface
-            player.GetComponent<IDamageable>()?.TakeDamage(attackDamage);
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+                playerHealth.TakeDamage((int)attackDamage);
         }
     }
 }
