@@ -17,6 +17,11 @@ public abstract class EnemyBase : MonoBehaviour
     private Vector3 spawnPosition;
     private Quaternion spawnRotation;
 
+    [Header("Item Drop")]
+    [Tooltip("Prefab to spawn on death. Leave empty for no drop. Your teammate's pickup/interaction script should live on this prefab.")]
+    public GameObject itemDropPrefab;
+    [Range(0f, 1f)] public float dropChance = 1f; // 1 = always drops, 0.3 = 30% chance, etc.
+
     protected float currentHealth;
     protected State currentState = State.Patrol;
     protected Transform player;
@@ -28,6 +33,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected static readonly int AttackParam = Animator.StringToHash("Attack");
     protected static readonly int DieParam = Animator.StringToHash("Die");
     protected static readonly int TauntParam = Animator.StringToHash("Taunt");
+    protected static readonly int AttackIndexParam = Animator.StringToHash("AttackIndex");
 
     protected virtual void OnEnable()
     {
@@ -96,6 +102,9 @@ public abstract class EnemyBase : MonoBehaviour
         // Disable colliders so it doesn't block the player/bullets after dying
         foreach (var col in GetComponents<Collider>())
             col.enabled = false;
+
+        if (itemDropPrefab != null && Random.value <= dropChance)
+            Instantiate(itemDropPrefab, transform.position, Quaternion.identity);
 
         if (!testMode)
             Destroy(gameObject, 5f); // give the death animation time to play
