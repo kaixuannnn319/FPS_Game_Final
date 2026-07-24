@@ -193,7 +193,7 @@ public class InventoryController : MonoBehaviour
                 break;
 
             case WeaponType.WandLevel3:
-                if (!hasWandLevel1) return false;
+                if (!hasWandLevel3) return false;
                 break;
         }
 
