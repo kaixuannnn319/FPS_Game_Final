@@ -16,7 +16,7 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 3f))
         {
-            IInteractable target = hit.collider.GetComponent<IInteractable>();
+            IInteractable target = hit.collider.GetComponentInParent<IInteractable>();
 
             if (target != null && Input.GetKeyDown(KeyCode.E))
             {
