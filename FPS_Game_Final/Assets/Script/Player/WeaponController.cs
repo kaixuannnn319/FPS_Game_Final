@@ -142,6 +142,8 @@ public class WeaponController : MonoBehaviour
 
         knifeModel.SetActive(false);
         wandLevel1Model.SetActive(false);
+        wandLevel2Model.SetActive(false);
+        wandLevel3Model.SetActive(false);
 
         switch (currentWeaponType)
         {
