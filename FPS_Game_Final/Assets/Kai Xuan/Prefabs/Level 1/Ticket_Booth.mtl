@@ -1,0 +1,25 @@
+newmtl Wall
+bump painted_plaster_wall_nor_gl_1k.exr
+map_Kd painted_plaster_wall_rough_1k.exr
+Kd 0.9942637 1 0.9474393
+d 1
+
+newmtl Wood
+bump wood_table_worn_nor_gl_1k.exr
+map_Kd wood_table_worn_diff_1k.jpg
+Kd 1 1 1
+d 1
+
+newmtl ProBuilderDefault
+map_Kd GridBox_Default.png
+Kd 1 1 1
+d 1
+
+newmtl M_Tileable_Roof2
+Kd 1.0 1.0 1.0
+d 1.0
+
+newmtl M_Tileable_Wall_Stone_01
+Kd 1.0 1.0 1.0
+d 1.0
+
