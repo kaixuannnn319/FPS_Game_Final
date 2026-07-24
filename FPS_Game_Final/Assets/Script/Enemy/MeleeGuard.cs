@@ -15,6 +15,7 @@ public class MeleeGuard : EnemyBase
 
     [Header("Combat")]
     public float attackRange = 2f;
+    public int attackVariantCount = 1; // set to how many attack animations you've wired up (e.g. 3)
     public float attackCooldown = 1.5f;
     public float attackDamage = 15f;
     private float attackTimer;
@@ -72,6 +73,7 @@ public class MeleeGuard : EnemyBase
                 }
                 else if (attackTimer <= 0f)
                 {
+                    anim.SetInteger(AttackIndexParam, Random.Range(0, attackVariantCount));
                     anim.SetTrigger(AttackParam);
                     attackTimer = attackCooldown;
                     // Hook actual damage application to an Animation Event on the attack clip
