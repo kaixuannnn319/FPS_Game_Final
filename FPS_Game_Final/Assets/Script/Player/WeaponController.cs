@@ -5,6 +5,8 @@ public class WeaponController : MonoBehaviour
     private InventoryController inventory;
     private PlayerHealth playerHealth;
     private Camera playerCamera;
+    private Animator animator;
+
     [Header("Knife")]
     [SerializeField] private float knifeRange = 2f;
 
@@ -14,6 +16,9 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private GameObject wandLevel2Model;
     [SerializeField] private GameObject wandLevel3Model;
 
+    [Header("Bullet")]
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform firePoint;
     [Header("Current Weapon")]
     private WeaponType currentWeaponType;
 
@@ -30,6 +35,7 @@ public class WeaponController : MonoBehaviour
         inventory = GetComponent<InventoryController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerCamera = Camera.main;
+        animator = GetComponentInChildren<Animator>();
 
         UpdateWeaponStats();
         UpdateWeaponModel();
@@ -220,43 +226,60 @@ public class WeaponController : MonoBehaviour
     }
     private void KnifeAttack()
     {
-        Debug.Log("Knife Attack");
-
-        Ray ray = new Ray(
-            playerCamera.transform.position,
-            playerCamera.transform.forward);
-
-        Debug.DrawRay(
-            playerCamera.transform.position,
-            playerCamera.transform.forward * knifeRange,
-            Color.red,
-            1f);
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, knifeRange))
-        {
-            EnemyBase enemy = hit.collider.GetComponent<EnemyBase>();
-
-            if (enemy != null)
-            {
-                enemy.TakeDamage(currentDamage);
-
-                Debug.Log("Hit Enemy");
-            }
-        }
+        animator.SetTrigger("KnifeAttack");
     }
     private void WandLevel1Attack()
     {
-        Debug.Log("Wand Level 1 Attack");
-    }
-    private void WandLevel2Attack()
-    {
-        Debug.Log("Wand Level 2 Attack");
-    }
-    private void WandLevel3Attack()
-    {
-        Debug.Log("Wand Level 3 Attack");
+        animator.SetTrigger("WandAttack");
+        
     }
 
+    private void WandLevel2Attack()
+    {
+        animator.SetTrigger("WandAttack");
+        
+    }
+
+    private void WandLevel3Attack()
+    {
+        animator.SetTrigger("WandAttack");
+        
+    }
+    public void ShootBullet()
+    {
+        
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+
+        RaycastHit hit;
+
+        Vector3 targetPoint;
+
+       
+        if (Physics.Raycast(ray, out hit))
+        {
+            targetPoint = hit.point;
+        }
+        else
+        {
+           
+            targetPoint = ray.GetPoint(100f);
+        }
+
+        
+        Vector3 direction = (targetPoint - firePoint.position).normalized;
+
+       
+        GameObject bullet = Instantiate(
+            bulletPrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction));
+
+        
+        BulletController bulletController = bullet.GetComponent<BulletController>();
+
+        if (bulletController != null)
+        {
+            bulletController.damage = currentDamage;
+        }
+    }
 }
