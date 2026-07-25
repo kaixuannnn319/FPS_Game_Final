@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     [SerializeField]
     private Camera playerCamera;
+
+    private bool canMove = true;
+
     // Mouse Look
     [Header("Mouse Settings")]
     [SerializeField]
@@ -66,9 +69,14 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
 
         Look();
-        Move();
-        Jump();
-        Crouch();
+
+        if (canMove)//When triggering dialogue UI Player can't move
+        {
+            Move();
+            Jump();
+            Crouch();
+        }
+
         Gravity();
     }
     private void Look()
@@ -131,6 +139,10 @@ public class PlayerController : MonoBehaviour
             controller.height = standingHeight;
             controller.center = new Vector3(0, standingHeight / 2f, 0);
         }
+    }
+        public void SetMovementEnabled(bool enabled)   //for disabling user movement when triggered dialogue UI
+    {
+        canMove = enabled;
     }
 
     // Optional: visualize the ground check sphere in the Scene view
