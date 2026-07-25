@@ -14,11 +14,61 @@ public class MeleeGuard : EnemyBase
     private float tauntTimer;
 
     [Header("Combat")]
-    public float attackRange = 2f;
+    public float[] attackRanges = new float[] { 2f }; // one range per variant — index must match AttackIndex
     public int attackVariantCount = 1; // set to how many attack animations you've wired up (e.g. 3)
-    public float attackAnimationLockTime = 2.5f; // total seconds the attack+rest animation takes — boss can't leave Attack state until this expires
+    public float[] attackCooldowns = new float[] { 1.5f }; // one cooldown per variant — index must match AttackIndex
+    public float[] attackAnimationLockTimes = new float[] { 2.5f }; // one lock time per variant — total seconds that clip+rest sequence takes
+    public float closeGapTimeout = 3f; // how long it'll keep trying to close in for a short-range attack before settling for a long-range one
     private float lockTimer;
-    public float attackCooldown = 1.5f;
+    private int lastAttackIndex;
+    private float closeGapTimer;
+
+    // Largest range across all variants — used to decide when to even enter Attack state at all
+    private float MaxAttackRange()
+    {
+        float max = 0f;
+        if (attackRanges == null || attackRanges.Length == 0) return 2f; // fallback
+        foreach (float r in attackRanges) if (r > max) max = r;
+        return max;
+    }
+
+    // Smallest range across all variants — the "preferred" attack, worth closing the gap for
+    private float ShortestAttackRange()
+    {
+        if (attackRanges == null || attackRanges.Length == 0) return 2f; // fallback
+        float min = attackRanges[0];
+        foreach (float r in attackRanges) if (r < min) min = r;
+        return min;
+    }
+
+    // Picks randomly among whichever attack(s) share the SHORTEST range that can still
+    // reach the player — favors close-range attacks over long-range ones, and randomizes
+    // fairly if multiple attacks share that same shortest range.
+    private int PickAttackIndexInRange()
+    {
+        float dist = DistanceToPlayer();
+        float bestRange = float.MaxValue;
+        var candidates = new System.Collections.Generic.List<int>();
+
+        for (int i = 0; i < attackVariantCount && i < attackRanges.Length; i++)
+        {
+            if (dist > attackRanges[i]) continue; // can't reach with this one
+
+            if (attackRanges[i] < bestRange)
+            {
+                bestRange = attackRanges[i];
+                candidates.Clear();
+                candidates.Add(i);
+            }
+            else if (Mathf.Approximately(attackRanges[i], bestRange))
+            {
+                candidates.Add(i);
+            }
+        }
+
+        if (candidates.Count == 0) return 0; // fallback — shouldn't normally happen
+        return candidates[Random.Range(0, candidates.Count)];
+    }
     public float attackDamage = 15f;
     private float attackTimer;
 
@@ -60,30 +110,80 @@ public class MeleeGuard : EnemyBase
 
             case State.Chase:
                 agent.SetDestination(player.position);
-                if (DistanceToPlayer() <= attackRange)
+
+                if (DistanceToPlayer() <= ShortestAttackRange())
+                {
+                    closeGapTimer = 0f;
+                    SnapFacePlayer(); // lock facing direction once, right as the attack starts
                     currentState = State.Attack;
-                else if (!CanSeePlayer())
-                    currentState = State.Patrol; // lost the player, go back to patrolling
+                }
+                else if (DistanceToPlayer() <= MaxAttackRange())
+                {
+                    // Close enough for a long-range attack, but keep trying to close in for the short one first
+                    closeGapTimer += Time.deltaTime;
+                    if (closeGapTimer >= closeGapTimeout)
+                    {
+                        closeGapTimer = 0f;
+                        SnapFacePlayer(); // lock facing direction once, right as the attack starts
+                        currentState = State.Attack;
+                    }
+                }
+                else
+                {
+                    closeGapTimer = 0f;
+                    if (!CanSeePlayer())
+                        currentState = State.Patrol; // lost the player, go back to patrolling
+                }
                 break;
 
             case State.Attack:
                 agent.isStopped = true; // fully stop, not just destination = self
-                FacePlayer();
                 lockTimer -= Time.deltaTime;
 
-                if (lockTimer <= 0f && DistanceToPlayer() > attackRange)
+                if (lockTimer <= 0f)
                 {
-                    agent.isStopped = false;
-                    currentState = State.Chase;
-                }
-                else if (lockTimer <= 0f && attackTimer <= 0f)
-                {
-                    anim.SetInteger(AttackIndexParam, Random.Range(0, attackVariantCount));
-                    anim.SetTrigger(AttackParam);
-                    attackTimer = attackCooldown;
-                    lockTimer = attackAnimationLockTime;
-                    // Hook actual damage application to an Animation Event on the attack clip
-                    // (call DealDamage() at the moment the weapon hits, not here directly)
+                    // Sequence just finished — snap back onto the NavMesh in case root motion pushed us off it
+                    agent.updatePosition = true;
+
+                    if (UnityEngine.AI.NavMesh.SamplePosition(transform.position, out UnityEngine.AI.NavMeshHit hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
+                    {
+                        transform.position = hit.position;
+                        agent.Warp(hit.position);
+                    }
+                    else
+                    {
+                        agent.Warp(transform.position); // fallback, shouldn't normally hit this
+                    }
+
+                    if (DistanceToPlayer() > MaxAttackRange())
+                    {
+                        agent.isStopped = false;
+                        currentState = State.Chase;
+                    }
+                    else if (attackTimer <= 0f)
+                    {
+                        agent.updatePosition = false; // hand control to root motion again for the next swing
+                        SnapFacePlayer(); // lock facing direction once, right as this swing starts
+                        lastAttackIndex = PickAttackIndexInRange();
+                        anim.SetInteger(AttackIndexParam, lastAttackIndex);
+                        anim.SetTrigger(AttackParam);
+
+                        float cooldown = (attackCooldowns != null && lastAttackIndex < attackCooldowns.Length)
+                            ? attackCooldowns[lastAttackIndex]
+                            : 1.5f; // fallback if array wasn't sized correctly
+                        attackTimer = cooldown;
+
+                        lockTimer = (attackAnimationLockTimes != null && lastAttackIndex < attackAnimationLockTimes.Length)
+                            ? attackAnimationLockTimes[lastAttackIndex]
+                            : 2.5f; // fallback if array wasn't sized correctly
+                        // Hook actual damage application to an Animation Event on the attack clip
+                        // (call DealDamage() at the moment the weapon hits, not here directly)
+                    }
+                    // else: lock expired but still on cooldown and still in range — just wait, agent stays synced/idle
+                    else
+                    {
+                        FacePlayer(); // keep tracking the player between swings, while waiting on cooldown
+                    }
                 }
                 break;
         }
@@ -113,10 +213,24 @@ public class MeleeGuard : EnemyBase
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 10f * Time.deltaTime);
     }
 
+    // Instantly snaps to face the player, no gradual turning — used right as a swing starts
+    // so the attack always fires in the correct direction, regardless of how far off it was before.
+    private void SnapFacePlayer()
+    {
+        Vector3 dir = (player.position - transform.position);
+        dir.y = 0f;
+        if (dir.sqrMagnitude > 0.01f)
+            transform.rotation = Quaternion.LookRotation(dir);
+    }
+
     // Call this from an Animation Event placed on the attack clip's "hit" frame
     public void DealDamage()
     {
-        if (DistanceToPlayer() <= attackRange + 0.5f)
+        float range = (attackRanges != null && lastAttackIndex < attackRanges.Length)
+            ? attackRanges[lastAttackIndex]
+            : MaxAttackRange();
+
+        if (DistanceToPlayer() <= range + 0.5f)
         {
             PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)

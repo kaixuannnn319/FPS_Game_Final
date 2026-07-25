@@ -107,13 +107,12 @@ MonoBehaviour:
   itemDropPrefab: {fileID: 0}
   dropChance: 1
   anim: {fileID: 7857884307017045949}
-  patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
+  patrolPoints: []
   patrolWaitTime: 0.1
   tauntDuration: 1.2
   attackRange: 2
   attackVariantCount: 2
+  attackAnimationLockTime: 2.5
   attackCooldown: 1.5
   attackDamage: 15
 --- !u!1001 &5176911409385138363
