@@ -2,46 +2,41 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    [Header("Bullet Settings")]
     [SerializeField] private float moveSpeed = 15f;
     [SerializeField] private float lifeTime = 5f;
+    [SerializeField] private GameObject impactEffect;
 
-    [Header("Damage")]
     public int damage;
 
-    [Header("Effect")]
-    [SerializeField] private GameObject impactEffect;
+    private Rigidbody rb;
 
     void Start()
     {
-        Debug.Log("Bullet Damage : " + damage);
+        rb = GetComponent<Rigidbody>();
+
+        // Use velocity instead of moving the Transform manually
+        rb.linearVelocity = transform.forward * moveSpeed;
+
         Destroy(gameObject, lifeTime);
     }
 
-    void Update()
+    private void OnCollisionEnter(Collision collision)
     {
-        transform.position += transform.forward * moveSpeed * Time.deltaTime;
-    }
+        Debug.Log("Hit " + collision.collider.name);
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Bullet Hit : " + other.name);
-
-        EnemyBase enemy = other.GetComponent<EnemyBase>();
+        EnemyBase enemy = collision.collider.GetComponentInParent<EnemyBase>();
 
         if (enemy != null)
-        {
-            Debug.Log("Hit Enemy!");
-
             enemy.TakeDamage(damage);
-        }
 
         if (impactEffect != null)
         {
+            ContactPoint cp = collision.contacts[0];
+
             Instantiate(
                 impactEffect,
-                transform.position,
-                Quaternion.identity);
+                cp.point,
+                Quaternion.LookRotation(cp.normal));
         }
 
         Destroy(gameObject);

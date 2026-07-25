@@ -331,6 +331,34 @@ public class WeaponController : MonoBehaviour
         {
             bulletController.damage = currentDamage;
         }
+
+        // Ignore collision with the current weapon
+        Collider bulletCollider = bullet.GetComponent<Collider>();
+
+        GameObject activeWeapon = null;
+
+        switch (currentWeaponType)
+        {
+            case WeaponType.WandLevel1:
+                activeWeapon = wandLevel1Model;
+                break;
+
+            case WeaponType.WandLevel2:
+                activeWeapon = wandLevel2Model;
+                break;
+
+            case WeaponType.WandLevel3:
+                activeWeapon = wandLevel3Model;
+                break;
+        }
+
+        if (activeWeapon != null && bulletCollider != null)
+        {
+            foreach (Collider weaponCollider in activeWeapon.GetComponentsInChildren<Collider>())
+            {
+                Physics.IgnoreCollision(bulletCollider, weaponCollider);
+            }
+        }
     }
     private void OnDrawGizmosSelected()
     {
