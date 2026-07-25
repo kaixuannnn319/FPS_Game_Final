@@ -37,12 +37,19 @@ public class WeaponController : MonoBehaviour
     [Header("Fire Timer")]
     private float nextFireTime;
 
+    private bool isAiming = false;
+    [Header("Aim Down Sight")]
+    [SerializeField] private float normalFOV = 60f;
+    [SerializeField] private float aimFOV = 35f;
+    [SerializeField] private float aimSpeed = 10f;
+
     void Start()
     {
         inventory = GetComponent<InventoryController>();
         playerHealth = GetComponent<PlayerHealth>();
         playerCamera = Camera.main;
         animator = GetComponentInChildren<Animator>();
+        playerCamera.fieldOfView = normalFOV;
 
         UpdateWeaponStats();
         UpdateWeaponModel();
@@ -52,6 +59,7 @@ public class WeaponController : MonoBehaviour
     {
         WeaponSwitch();
         Attack();
+        Aim();
 
     }
 
@@ -299,22 +307,19 @@ public class WeaponController : MonoBehaviour
 
         Vector3 targetPoint;
 
-       
+
         if (Physics.Raycast(ray, out hit))
         {
             targetPoint = hit.point;
         }
         else
         {
-           
             targetPoint = ray.GetPoint(100f);
         }
 
-        
-        Vector3 direction = (targetPoint - firePoint.position).normalized;
+        Vector3 direction =
+            (targetPoint - firePoint.position).normalized;
 
-        if (currentBulletPrefab == null)
-            return;
         GameObject bullet = Instantiate(
         currentBulletPrefab,
         firePoint.position,
@@ -334,6 +339,24 @@ public class WeaponController : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(knifePoint.position, knifeRange);
+    }
+
+    private void Aim()
+    {
+        if (currentWeaponType == WeaponType.Knife)
+            return;
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            isAiming = !isAiming;
+        }
+
+        float targetFOV = isAiming ? aimFOV : normalFOV;
+
+        playerCamera.fieldOfView = Mathf.Lerp(
+            playerCamera.fieldOfView,
+            targetFOV,
+            Time.deltaTime * aimSpeed);
     }
 
 }
