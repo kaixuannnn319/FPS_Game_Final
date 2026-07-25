@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -7,7 +8,17 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private int maxHealth = 100;
 
+    [SerializeField]
     private int currentHealth;
+    private InventoryController inventory;
+
+    [SerializeField] private int bandageHealAmount = 30;
+    [SerializeField] private int elixirHealAmount = 60;
+
+    [SerializeField] private float bandageUseTime = 1.2f;
+    [SerializeField] private float elixirUseTime = 2f;
+
+    private bool isHealing = false;
 
     //For the UI or other systems to listen to
     public UnityEvent<int,int> OnHealthChange;
@@ -18,12 +29,26 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         OnHealthChange?.Invoke(currentHealth,maxHealth);
+        inventory = GetComponent<InventoryController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            TakeDamage(30);
+        }
 
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            UseBandage();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            UseElixir();
+        }
 
     }
 
@@ -75,5 +100,71 @@ public class PlayerHealth : MonoBehaviour
 
     public int GetMaxHealth()
         { return maxHealth; }
+
+    private void UseBandage()
+    {
+        if (isHealing)
+            return;
+
+        if (currentHealth >= maxHealth)
+        {
+            Debug.Log("Health is already full!");
+            return;
+        }
+
+        if (!inventory.UseBandage())
+        {
+            Debug.Log("No Bandage!");
+            return;
+        }
+
+        StartCoroutine(BandageRoutine());
+    }
+
+    private void UseElixir()
+    {
+        if (isHealing)
+            return;
+
+        if (currentHealth >= maxHealth)
+        {
+            Debug.Log("Health is already full!");
+            return;
+        }
+
+        if (!inventory.UseElixir())
+        {
+            Debug.Log("No Elixir!");
+            return;
+        }
+
+        StartCoroutine(ElixirRoutine());
+    }
+
+    private IEnumerator BandageRoutine()
+    {
+        isHealing = true;
+
+        Debug.Log("Using Bandage...");
+
+        yield return new WaitForSeconds(bandageUseTime);
+
+        Heal(bandageHealAmount);
+
+        isHealing = false;
+    }
+
+    private IEnumerator ElixirRoutine()
+    {
+        isHealing = true;
+
+        Debug.Log("Using Elixir...");
+
+        yield return new WaitForSeconds(elixirUseTime);
+
+        Heal(elixirHealAmount);
+
+        isHealing = false;
+    }
 }
 
