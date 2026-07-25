@@ -17,7 +17,11 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private GameObject wandLevel3Model;
 
     [Header("Bullet")]
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject bulletLevel1;
+    [SerializeField] private GameObject bulletLevel2;
+    [SerializeField] private GameObject bulletLevel3;
+    [SerializeField] private GameObject knifeHitEffect;
+    [SerializeField] private Transform knifePoint;
     [SerializeField] private Transform firePoint;
     [Header("Current Weapon")]
     private WeaponType currentWeaponType;
@@ -26,6 +30,9 @@ public class WeaponController : MonoBehaviour
     private int currentDamage;
     private float currentEnergyCost;
     private float fireCooldown;
+
+    
+    private GameObject currentBulletPrefab;
 
     [Header("Fire Timer")]
     private float nextFireTime;
@@ -102,6 +109,7 @@ public class WeaponController : MonoBehaviour
                 currentDamage = 0;
                 currentEnergyCost = 0;
                 fireCooldown = 0;
+                currentBulletPrefab = null;
 
                 break;
 
@@ -110,22 +118,25 @@ public class WeaponController : MonoBehaviour
                 currentDamage = 5;
                 currentEnergyCost = 0;
                 fireCooldown = 0;
+                currentBulletPrefab = null;
 
                 break;
 
             case WeaponType.WandLevel1:
 
-                currentDamage = 20;
+                currentDamage = 5;
                 currentEnergyCost = 5;
                 fireCooldown = 0.2f;
+                currentBulletPrefab = bulletLevel1;
 
                 break;
 
             case WeaponType.WandLevel2:
 
-                currentDamage = 35;
+                currentDamage = 20;
                 currentEnergyCost = 10;
                 fireCooldown = 0.5f;
+                currentBulletPrefab = bulletLevel2;
 
                 break;
 
@@ -134,6 +145,7 @@ public class WeaponController : MonoBehaviour
                 currentDamage = 50;
                 currentEnergyCost = 20;
                 fireCooldown = 1.0f;
+                currentBulletPrefab = bulletLevel3;
 
                 break;
         }
@@ -227,6 +239,31 @@ public class WeaponController : MonoBehaviour
     private void KnifeAttack()
     {
         animator.SetTrigger("KnifeAttack");
+
+        Ray ray = playerCamera.ViewportPointToRay(
+            new Vector3(0.5f, 0.5f));
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, knifeRange))
+        {
+            Debug.Log("Knife Hit!");
+
+            EnemyBase enemy = hit.collider.GetComponentInParent<EnemyBase>();
+
+            if (enemy != null)
+            {
+                enemy.TakeDamage(currentDamage);
+
+                if (knifeHitEffect != null)
+                {
+                    Instantiate(
+                        knifeHitEffect,
+                        hit.point,
+                        Quaternion.LookRotation(hit.normal));
+                }
+            }
+        }
     }
     private void WandLevel1Attack()
     {
@@ -247,7 +284,15 @@ public class WeaponController : MonoBehaviour
     }
     public void ShootBullet()
     {
-        
+        Debug.Log("FirePoint = " + firePoint);
+
+        if (firePoint == null)
+        {
+            Debug.LogError("FirePoint is Missing!");
+            return;
+        }
+
+        Debug.Log(currentBulletPrefab);
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
         RaycastHit hit;
@@ -268,13 +313,13 @@ public class WeaponController : MonoBehaviour
         
         Vector3 direction = (targetPoint - firePoint.position).normalized;
 
-       
+        if (currentBulletPrefab == null)
+            return;
         GameObject bullet = Instantiate(
-            bulletPrefab,
-            firePoint.position,
-            Quaternion.LookRotation(direction));
+        currentBulletPrefab,
+        firePoint.position,
+        Quaternion.LookRotation(direction));
 
-        
         BulletController bulletController = bullet.GetComponent<BulletController>();
 
         if (bulletController != null)
@@ -282,4 +327,13 @@ public class WeaponController : MonoBehaviour
             bulletController.damage = currentDamage;
         }
     }
+    private void OnDrawGizmosSelected()
+    {
+        if (knifePoint == null)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(knifePoint.position, knifeRange);
+    }
+
 }

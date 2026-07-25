@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 548503816459741365}
   - component: {fileID: 8380562975864220703}
   m_Layer: 0
-  m_Name: "PlayerImpact\uFF08effect1\uFF09"
+  m_Name: KnifeEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,7 +41,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2680585548655072237}
   serializedVersion: 8
-  lengthInSec: 1
+  lengthInSec: 0.15
   simulationSpeed: 1
   stopAction: 2
   cullingMode: 0
@@ -4840,7 +4840,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0029e4f5fff4ca047804084fb1672402, type: 2}
+  - {fileID: 2100000, guid: 38bf75838efc1214984af0b1de27a54b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
