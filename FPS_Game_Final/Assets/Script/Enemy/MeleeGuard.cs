@@ -19,9 +19,13 @@ public class MeleeGuard : EnemyBase
     public float[] attackCooldowns = new float[] { 1.5f }; // one cooldown per variant — index must match AttackIndex
     public float[] attackAnimationLockTimes = new float[] { 2.5f }; // one lock time per variant — total seconds that clip+rest sequence takes
     public float closeGapTimeout = 3f; // how long it'll keep trying to close in for a short-range attack before settling for a long-range one
+    public float[] attackLaunchDistances = new float[] { 0f }; // meters to launch forward during this attack — 0 = no launch, one per variant
+    public float attackLaunchDuration = 0.25f; // how many seconds the launch takes to complete
     private float lockTimer;
-    private int lastAttackIndex;
+    protected int lastAttackIndex;
     private float closeGapTimer;
+    private float launchTimer;
+    private Vector3 launchVelocity;
 
     // Largest range across all variants — used to decide when to even enter Attack state at all
     private float MaxAttackRange()
@@ -109,7 +113,7 @@ public class MeleeGuard : EnemyBase
                 break;
 
             case State.Chase:
-                agent.SetDestination(player.position);
+                agent.SetDestination(GetChaseDestination());
 
                 if (DistanceToPlayer() <= ShortestAttackRange())
                 {
@@ -140,6 +144,12 @@ public class MeleeGuard : EnemyBase
                 agent.isStopped = true; // fully stop, not just destination = self
                 lockTimer -= Time.deltaTime;
 
+                if (launchTimer > 0f)
+                {
+                    transform.position += launchVelocity * Time.deltaTime;
+                    launchTimer -= Time.deltaTime;
+                }
+
                 if (lockTimer <= 0f)
                 {
                     // Sequence just finished — snap back onto the NavMesh in case root motion pushed us off it
@@ -167,6 +177,7 @@ public class MeleeGuard : EnemyBase
                         lastAttackIndex = PickAttackIndexInRange();
                         anim.SetInteger(AttackIndexParam, lastAttackIndex);
                         anim.SetTrigger(AttackParam);
+                        StartLaunch(lastAttackIndex);
 
                         float cooldown = (attackCooldowns != null && lastAttackIndex < attackCooldowns.Length)
                             ? attackCooldowns[lastAttackIndex]
@@ -189,6 +200,13 @@ public class MeleeGuard : EnemyBase
         }
     }
 
+    // Where to walk toward while chasing. Default: straight to the player.
+    // Override in subclasses (e.g. a ranged/caster boss) to stop short and keep distance instead.
+    protected virtual Vector3 GetChaseDestination()
+    {
+        return player.position;
+    }
+
     private void Patrol()
     {
         if (patrolPoints.Length == 0) return;
@@ -202,6 +220,25 @@ public class MeleeGuard : EnemyBase
                 agent.SetDestination(patrolPoints[patrolIndex].position);
                 waitTimer = 0f;
             }
+        }
+    }
+
+    // Kicks off a manual forward dash for attack variants that have a launch distance set.
+    // Independent of root motion — works even if the clip itself has no baked movement.
+    private void StartLaunch(int attackIndex)
+    {
+        float distance = (attackLaunchDistances != null && attackIndex < attackLaunchDistances.Length)
+            ? attackLaunchDistances[attackIndex]
+            : 0f;
+
+        if (distance > 0f)
+        {
+            launchVelocity = transform.forward * (distance / attackLaunchDuration);
+            launchTimer = attackLaunchDuration;
+        }
+        else
+        {
+            launchTimer = 0f;
         }
     }
 
@@ -224,7 +261,7 @@ public class MeleeGuard : EnemyBase
     }
 
     // Call this from an Animation Event placed on the attack clip's "hit" frame
-    public void DealDamage()
+    public virtual void DealDamage()
     {
         float range = (attackRanges != null && lastAttackIndex < attackRanges.Length)
             ? attackRanges[lastAttackIndex]
