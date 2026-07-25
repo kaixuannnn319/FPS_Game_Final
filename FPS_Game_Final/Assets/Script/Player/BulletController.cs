@@ -3,7 +3,7 @@ using UnityEngine;
 public class BulletController : MonoBehaviour
 {
     [Header("Bullet Settings")]
-    [SerializeField] private float moveSpeed = 20f;
+    [SerializeField] private float moveSpeed = 15f;
     [SerializeField] private float lifeTime = 5f;
 
     [Header("Damage")]
@@ -14,6 +14,7 @@ public class BulletController : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("Bullet Damage : " + damage);
         Destroy(gameObject, lifeTime);
     }
 
@@ -30,6 +31,8 @@ public class BulletController : MonoBehaviour
 
         if (enemy != null)
         {
+            Debug.Log("Hit Enemy!");
+
             enemy.TakeDamage(damage);
         }
 

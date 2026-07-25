@@ -7,6 +7,7 @@ public class WeaponPickup : MonoBehaviour, IInteractable
 
     public void Interact(GameObject player)
     {
+        Debug.Log("WeaponPickup Interact!");
         InventoryController inventory = player.GetComponent<InventoryController>();
 
         if (inventory == null)
