@@ -109,7 +109,7 @@ MonoBehaviour:
   anim: {fileID: 2820486139564736113}
   attackRange: 15
   attackCooldown: 2
-  projectileSpeed: 20
+  projectileSpeed: 30
   attackDamage: 10
   shootPoint: {fileID: 4284555281586924757}
   projectilePrefab: {fileID: 6275771782878689551, guid: d84c50c3c1a29bf41b65bf21f599b2f0, type: 3}

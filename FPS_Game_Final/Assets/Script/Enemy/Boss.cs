@@ -24,7 +24,10 @@ public class Boss : MeleeGuard
     {
         agent.speed *= phase2SpeedMultiplier;
         attackDamage *= phase2DamageMultiplier;
-        attackCooldown *= 0.7f; // attacks faster too
+
+        for (int i = 0; i < attackCooldowns.Length; i++)
+            attackCooldowns[i] *= 0.7f; // attacks faster too
+
         // Optional: anim.SetTrigger("Enrage") if your model has a rage/roar animation
     }
 
