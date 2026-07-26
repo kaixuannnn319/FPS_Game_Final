@@ -223,8 +223,8 @@ MonoBehaviour:
   tauntDuration: 1.2
   attackRanges:
   - 5
-  - 7
-  - 15
+  - 9
+  - 20
   attackVariantCount: 3
   attackCooldowns:
   - 1.5
@@ -237,19 +237,19 @@ MonoBehaviour:
   closeGapTimeout: 3
   attackLaunchDistances:
   - 5
-  - 7
+  - 9
   - 0
   attackLaunchDuration: 0.25
   attackDamage: 15
-  floatHeight: 1.5
+  floatHeight: 3
   meleeSwoopHeight: 0.2
-  heightChangeSpeed: 3
+  heightChangeSpeed: 7
   rangedAttackIndex: 2
   spellProjectilePrefab: {fileID: 6275771782878689551, guid: 557492a10f301c14e9e0fe56bc597f27, type: 3}
   castPoint: {fileID: 1184049122}
-  spellDamage: 20
+  spellDamage: 0
   spellSpeed: 50
-  preferredDistance: 10
+  preferredDistance: 15
 --- !u!195 &226178465
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -294,7 +294,7 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.67, z: 0}
 --- !u!4 &226178467
 Transform:
   m_ObjectHideFlags: 0
@@ -467,6 +467,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1082325381}
   - component: {fileID: 1082325383}
+  - component: {fileID: 1082325384}
   - component: {fileID: 1082325382}
   m_Layer: 0
   m_Name: Sphere
@@ -483,13 +484,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1082325380}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.192, y: -0.52, z: -0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.573, y: -0.636, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 127671611}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1082325382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -523,7 +524,30 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.65
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: -0.27, y: 0, z: 0}
+--- !u!136 &1082325384
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082325380}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.58
+  m_Direction: 1
+  m_Center: {x: 0.34, y: 0, z: -0.3}
 --- !u!1 &1184049121
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,6 +634,10 @@ PrefabInstance:
     - target: {fileID: 5917369699036767638, guid: 9f22ead35b5f262479764734a7a25ab5, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6329169776803096217, guid: 9f22ead35b5f262479764734a7a25ab5, type: 3}
+      propertyPath: patrolPoints.Array.size
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -797,7 +825,7 @@ Transform:
   m_GameObject: {fileID: 1543268260}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.266, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -822,10 +850,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.38
-  m_Height: 1.54
+  m_Radius: 0.47
+  m_Height: 2.15
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: -0.3, y: 0.3, z: 0}
 --- !u!114 &1543268263
 MonoBehaviour:
   m_ObjectHideFlags: 0
