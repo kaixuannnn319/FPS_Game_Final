@@ -30,6 +30,10 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = maxHealth;
         OnHealthChange?.Invoke(currentHealth,maxHealth);
         inventory = GetComponent<InventoryController>();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterPlayer(gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -77,7 +81,16 @@ public class PlayerHealth : MonoBehaviour
         OnHealthChange?.Invoke(currentHealth, maxHealth);
     }
 
-    private  void Die()
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+
+        OnHealthChange?.Invoke(currentHealth, maxHealth);
+
+        Debug.Log("Health Reset");
+    }
+
+    private void Die()
     {
         Debug.Log("Player Died");
 
@@ -92,6 +105,8 @@ public class PlayerHealth : MonoBehaviour
         Cursor.visible = true;
 
         OnPlayerDeath?.Invoke();
+
+        GameManager.Instance.PlayerDied();
     }
 
     //Getter
