@@ -2,121 +2,233 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BossHealthUIScript : MonoBehaviour
+public class BossHealthUIController : MonoBehaviour
 {
-    [Header("UI References")]
+    [System.Serializable]
+    private class TestBossData
+    {
+        public string bossName;
+        public float maximumHealth;
+    }
+
+    [Header("Boss UI References")]
+    [SerializeField] private CanvasGroup bossCanvasGroup;
+    [SerializeField] private Slider bossHealthSlider;
     [SerializeField] private TMP_Text bossNameText;
-    [SerializeField] private Image bossBarFill;
     [SerializeField] private TMP_Text bossHPText;
 
-    [Header("Display Settings")]
-    [Tooltip("正式整合时可以勾选，让 Boss 血条在游戏开始时隐藏。")]
-    [SerializeField] private bool hideOnStart;
+    [Header("Temporary Keyboard Test")]
+    [SerializeField] private bool enableKeyboardTest = true;
 
-    [Header("Temporary Test Data")]
-    [SerializeField] private string testBossName = "CYCLOPS";
-    [SerializeField] private int testMaxHealth = 500;
-    [SerializeField] private int testCurrentHealth = 500;
+    [SerializeField]
+    private TestBossData[] testBosses =
+    {
+        new TestBossData
+        {
+            bossName = "CYCLOPS",
+            maximumHealth = 500f
+        },
+        new TestBossData
+        {
+            bossName = "DRAGONIDE",
+            maximumHealth = 800f
+        },
+        new TestBossData
+        {
+            bossName = "EVIL WATCHER",
+            maximumHealth = 1200f
+        },
+        new TestBossData
+        {
+            bossName = "DEMON LORD",
+            maximumHealth = 1500f
+        }
+    };
+
+    [SerializeField] private float testDamageAmount = 100f;
+    [SerializeField] private float testHealAmount = 100f;
+
+    private int testBossIndex = -1;
+    private float testCurrentHealth;
+    private float testMaximumHealth;
 
     private void Awake()
     {
-        if (hideOnStart)
+        if (bossCanvasGroup == null || bossHealthSlider == null)
         {
-            gameObject.SetActive(false);
+            Debug.LogError(
+                "BossHealthUIController: Required UI references are missing."
+            );
+
+            enabled = false;
+            return;
+        }
+
+        bossHealthSlider.minValue = 0f;
+        bossHealthSlider.maxValue = 1f;
+
+        HideBoss();
+    }
+
+    private void Update()
+    {
+        if (!enableKeyboardTest)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            ShowNextTestBoss();
+        }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            testCurrentHealth = Mathf.Clamp(
+                testCurrentHealth - testDamageAmount,
+                0f,
+                testMaximumHealth
+            );
+
+            SetBossHealth(
+                testCurrentHealth,
+                testMaximumHealth
+            );
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            testCurrentHealth = Mathf.Clamp(
+                testCurrentHealth + testHealAmount,
+                0f,
+                testMaximumHealth
+            );
+
+            SetBossHealth(
+                testCurrentHealth,
+                testMaximumHealth
+            );
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            HideBoss();
         }
     }
 
-    /// <summary>
-    /// Boss 战开始时显示血条，并设置 Boss 名称和血量。
-    /// </summary>
-    public void ShowBoss(string bossName, int currentHealth, int maxHealth)
+    private void ShowNextTestBoss()
     {
-        gameObject.SetActive(true);
-
-        if (bossNameText != null)
+        if (testBosses == null || testBosses.Length == 0)
         {
-            bossNameText.text = bossName.ToUpperInvariant();
+            return;
         }
 
-        UpdateHealth(currentHealth, maxHealth);
+        testBossIndex++;
+
+        if (testBossIndex >= testBosses.Length)
+        {
+            testBossIndex = 0;
+        }
+
+        TestBossData selectedBoss = testBosses[testBossIndex];
+
+        testMaximumHealth = selectedBoss.maximumHealth;
+        testCurrentHealth = testMaximumHealth;
+
+        ShowBoss(
+            selectedBoss.bossName,
+            testCurrentHealth,
+            testMaximumHealth
+        );
     }
 
-    /// <summary>
-    /// Boss 血量发生变化时更新 UI。
-    /// </summary>
-    public void UpdateHealth(int currentHealth, int maxHealth)
+    public void ShowBoss(
+        string bossName,
+        float currentHealth,
+        float maximumHealth
+    )
     {
-        int safeMaxHealth = Mathf.Max(1, maxHealth);
-        int safeCurrentHealth =
-            Mathf.Clamp(currentHealth, 0, safeMaxHealth);
+        SetBossVisible(true);
+        SetBossName(bossName);
+        SetBossHealth(currentHealth, maximumHealth);
+    }
 
-        if (bossBarFill != null)
+    public void SetBossName(string bossName)
+    {
+        if (bossNameText == null)
         {
-            bossBarFill.fillAmount =
-                (float)safeCurrentHealth / safeMaxHealth;
+            return;
         }
+
+        bossNameText.text = string.IsNullOrWhiteSpace(bossName)
+            ? "BOSS"
+            : bossName;
+    }
+
+    public void SetBossHealth(
+        float currentHealth,
+        float maximumHealth
+    )
+    {
+        if (bossHealthSlider == null)
+        {
+            return;
+        }
+
+        if (maximumHealth <= 0f)
+        {
+            bossHealthSlider.value = 0f;
+
+            if (bossHPText != null)
+            {
+                bossHPText.text = "0 / 0";
+            }
+
+            return;
+        }
+
+        currentHealth = Mathf.Clamp(
+            currentHealth,
+            0f,
+            maximumHealth
+        );
+
+        bossHealthSlider.value =
+            currentHealth / maximumHealth;
 
         if (bossHPText != null)
         {
             bossHPText.text =
-                $"{safeCurrentHealth} / {safeMaxHealth}";
+                $"{Mathf.CeilToInt(currentHealth)} / " +
+                $"{Mathf.CeilToInt(maximumHealth)}";
         }
     }
 
-    /// <summary>
-    /// Boss 死亡或战斗结束时隐藏血条。
-    /// </summary>
+    public void SetBossHealthNormalized(float normalizedHealth)
+    {
+        if (bossHealthSlider == null)
+        {
+            return;
+        }
+
+        bossHealthSlider.value =
+            Mathf.Clamp01(normalizedHealth);
+    }
+
     public void HideBoss()
     {
-        gameObject.SetActive(false);
+        SetBossVisible(false);
     }
 
-    // 以下功能只是方便我们测试 UI。
-
-    [ContextMenu("Test: Show Boss")]
-    private void TestShowBoss()
+    private void SetBossVisible(bool visible)
     {
-        testCurrentHealth = Mathf.Clamp(
-            testCurrentHealth,
-            0,
-            Mathf.Max(1, testMaxHealth)
-        );
+        if (bossCanvasGroup == null)
+        {
+            return;
+        }
 
-        ShowBoss(
-            testBossName,
-            testCurrentHealth,
-            testMaxHealth
-        );
-    }
-
-    [ContextMenu("Test: Take 100 Damage")]
-    private void TestTakeDamage()
-    {
-        testCurrentHealth =
-            Mathf.Max(0, testCurrentHealth - 100);
-
-        ShowBoss(
-            testBossName,
-            testCurrentHealth,
-            testMaxHealth
-        );
-    }
-
-    [ContextMenu("Test: Reset Health")]
-    private void TestResetHealth()
-    {
-        testCurrentHealth = Mathf.Max(1, testMaxHealth);
-
-        ShowBoss(
-            testBossName,
-            testCurrentHealth,
-            testMaxHealth
-        );
-    }
-
-    [ContextMenu("Test: Hide Boss")]
-    private void TestHideBoss()
-    {
-        HideBoss();
+        bossCanvasGroup.alpha = visible ? 1f : 0f;
+        bossCanvasGroup.interactable = false;
+        bossCanvasGroup.blocksRaycasts = false;
     }
 }
