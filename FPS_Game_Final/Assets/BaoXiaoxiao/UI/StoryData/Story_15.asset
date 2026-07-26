@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed0e891b52028740a90999a64da9688, type: 3}
+  m_Name: Story_15
+  m_EditorClassIdentifier: Assembly-CSharp::StoryData
+  content: 'The three Sacred Seals were never treasures.
+
+
+    They were promises
+    between the Guardian Spirit and the people of Sanctoria.'
