@@ -1,12 +1,17 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HealingItemUIController : MonoBehaviour
 {
     [Header("Healing Item Icons")]
     [SerializeField] private Image healingItem1Icon;
     [SerializeField] private Image healingItem2Icon;
+
+    [Header("Count Text")]
+    [SerializeField] private TMP_Text healingItem1CountText;
+    [SerializeField] private TMP_Text healingItem2CountText;
 
     [Header("Use Feedback")]
     [SerializeField]
@@ -132,5 +137,23 @@ public class HealingItemUIController : MonoBehaviour
         {
             healingItem2Coroutine = null;
         }
+    }
+
+    public void UpdateHealingItems(int bandageCount, int elixirCount)
+    {
+        // Update count
+        healingItem1CountText.text = bandageCount.ToString();
+        healingItem2CountText.text = elixirCount.ToString();
+
+        healingItem1CountText.text = bandageCount.ToString();
+        healingItem2CountText.text = elixirCount.ToString();
+
+        Color c1 = healingItem1Icon.color;
+        c1.a = bandageCount > 0 ? 1f : 0.35f;
+        healingItem1Icon.color = c1;
+
+        Color c2 = healingItem2Icon.color;
+        c2.a = elixirCount > 0 ? 1f : 0.35f;
+        healingItem2Icon.color = c2;
     }
 }

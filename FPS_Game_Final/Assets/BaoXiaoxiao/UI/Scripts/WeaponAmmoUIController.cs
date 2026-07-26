@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WeaponAmmoUIController : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class WeaponAmmoUIController : MonoBehaviour
     [Header("Ammo Icons")]
     [Tooltip("顺序必须是 Basic、Enhanced、Sacred")]
     [SerializeField] private Image[] ammoIcons;
+
+    [Header("Ammo Count")]
+    [SerializeField] private TMP_Text[] ammoCountTexts;
 
     [Header("Selected Frames")]
     [Tooltip("顺序必须是 Basic、Enhanced、Sacred")]
@@ -25,6 +29,10 @@ public class WeaponAmmoUIController : MonoBehaviour
     [SerializeField]
     private Color reloadGreyColour =
         new Color32(110, 110, 110, 255);
+
+    [Header("Locked Weapon")]
+    [SerializeField]
+    private float lockedAlpha = 0.35f;
 
     [SerializeField] private float reloadGreyDuration = 0.4f;
 
@@ -142,6 +150,15 @@ public class WeaponAmmoUIController : MonoBehaviour
 
         selectedAmmoIndex = ammoIndex;
 
+        if (selectedAmmoIndex >= 0)
+        {
+            bool unlocked =
+                ammoIcons[selectedAmmoIndex].color.a > lockedAlpha;
+
+            if (!unlocked)
+                return;
+        }
+
         // Knife：不选择任何子弹
         if (selectedAmmoIndex == -1)
         {
@@ -248,10 +265,49 @@ public class WeaponAmmoUIController : MonoBehaviour
     private bool ReferencesAreValid()
     {
         return ammoSlots != null &&
-               ammoIcons != null &&
-               selectedFrames != null &&
-               ammoSlots.Length == 3 &&
-               ammoIcons.Length == 3 &&
-               selectedFrames.Length == 3;
+       ammoIcons != null &&
+       ammoCountTexts != null &&
+       selectedFrames != null &&
+       ammoSlots.Length == 3 &&
+       ammoIcons.Length == 3 &&
+       ammoCountTexts.Length == 3 &&
+       selectedFrames.Length == 3;
+    }
+
+    public void UpdateAmmoCount(
+    float basicAmmo,
+    float enhancedAmmo,
+    float sacredAmmo)
+    {
+        ammoCountTexts[0].text =
+            Mathf.RoundToInt(basicAmmo).ToString();
+
+        ammoCountTexts[1].text =
+            Mathf.RoundToInt(enhancedAmmo).ToString();
+
+        ammoCountTexts[2].text =
+            Mathf.RoundToInt(sacredAmmo).ToString();
+    }
+
+    public void UpdateAmmoAvailability(
+    bool hasBasic,
+    bool hasEnhanced,
+    bool hasSacred)
+    {
+        SetAmmoState(0, hasBasic);
+        SetAmmoState(1, hasEnhanced);
+        SetAmmoState(2, hasSacred);
+    }
+
+    private void SetAmmoState(int index, bool unlocked)
+    {
+        CanvasGroup group = ammoSlots[index].GetComponent<CanvasGroup>();
+
+        if (group == null)
+        {
+            group = ammoSlots[index].gameObject.AddComponent<CanvasGroup>();
+        }
+
+        group.alpha = unlocked ? 1f : lockedAlpha;
     }
 }
