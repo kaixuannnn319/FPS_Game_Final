@@ -38,10 +38,6 @@ public class WeaponSwitchUIController : MonoBehaviour
     [Tooltip("拖入挂有 WeaponAmmoUIController 的 WeaponAmmoUI")]
     [SerializeField] private WeaponAmmoUIController weaponAmmoUI;
 
-    [Header("Temporary Keyboard Test")]
-    [Tooltip("测试阶段勾选，正式连接 Player 武器系统后取消勾选")]
-    [SerializeField] private bool enableKeyboardTest = true;
-
     private RectTransform currentIconRect;
     private RectTransform incomingIconRect;
 
@@ -68,8 +64,11 @@ public class WeaponSwitchUIController : MonoBehaviour
 
         incomingWeaponIcon.enabled = false;
 
-        // 游戏开始时默认使用 Knife
-        SetWeaponVisualImmediately(0);
+        currentWeaponIcon.enabled = false;
+        incomingWeaponIcon.enabled = false;
+
+        if (weaponChargeBar != null)
+            weaponChargeBar.SetActive(false);
     }
 
     private void Start()
@@ -89,27 +88,7 @@ public class WeaponSwitchUIController : MonoBehaviour
 
     private void Update()
     {
-        if (!enableKeyboardTest || isSwitching)
-        {
-            return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            PlayWeaponSwitch(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            PlayWeaponSwitch(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            PlayWeaponSwitch(2);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            PlayWeaponSwitch(3);
-        }
+        
     }
 
     /// <summary>
@@ -224,9 +203,8 @@ public class WeaponSwitchUIController : MonoBehaviour
 
         currentWeaponIndex = targetWeaponIndex;
 
-        currentWeaponIcon.sprite =
-            weaponIcons[currentWeaponIndex];
-
+        currentWeaponIcon.enabled = true;
+        currentWeaponIcon.sprite = weaponIcons[currentWeaponIndex];
         currentWeaponIcon.preserveAspect = true;
 
         currentIconRect.anchoredPosition = Vector2.zero;
@@ -284,9 +262,9 @@ public class WeaponSwitchUIController : MonoBehaviour
     {
         currentWeaponIndex = weaponIndex;
 
-        currentWeaponIcon.sprite =
-            weaponIcons[currentWeaponIndex];
+        currentWeaponIcon.enabled = true;
 
+        currentWeaponIcon.sprite = weaponIcons[currentWeaponIndex];
         currentWeaponIcon.preserveAspect = true;
 
         currentIconRect.anchoredPosition = Vector2.zero;
@@ -307,7 +285,7 @@ public class WeaponSwitchUIController : MonoBehaviour
             return;
         }
 
-        // Knife 不显示能量条
+        // Knife doesn't show charge bar
         if (weaponIndex == 0)
         {
             weaponChargeBar.SetActive(false);
@@ -325,17 +303,14 @@ public class WeaponSwitchUIController : MonoBehaviour
         switch (weaponIndex)
         {
             case 1:
-                // Wand Level 1：蓝色
                 chargeBarFill.color = wandLevel1Colour;
                 break;
 
             case 2:
-                // Wand Level 2：绿色
                 chargeBarFill.color = wandLevel2Colour;
                 break;
 
             case 3:
-                // Wand Level 3：金色
                 chargeBarFill.color = wandLevel3Colour;
                 break;
         }
@@ -385,5 +360,19 @@ public class WeaponSwitchUIController : MonoBehaviour
                weaponIndex >= 0 &&
                weaponIndex < weaponIcons.Length &&
                weaponIcons[weaponIndex] != null;
+    }
+
+    public void HideWeaponUI()
+    {
+        currentWeaponIcon.enabled = false;
+        incomingWeaponIcon.enabled = false;
+
+        if (weaponChargeBar != null)
+            weaponChargeBar.SetActive(false);
+    }
+
+    public void ShowWeaponUI()
+    {
+        currentWeaponIcon.enabled = true;
     }
 }

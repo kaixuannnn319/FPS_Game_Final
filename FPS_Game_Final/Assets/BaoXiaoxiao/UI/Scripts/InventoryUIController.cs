@@ -27,19 +27,20 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private Sprite wand2Icon;
     [SerializeField] private Sprite wand3Icon;
 
-    [Header("Temporary Inventory Counts")]
-    [SerializeField] private int medical1Count = 3;
-    [SerializeField] private int medical2Count = 1;
-    [SerializeField] private int buffCount = 1;
-    [SerializeField] private int bullet1Count = 20;
-    [SerializeField] private int bullet2Count = 10;
-    [SerializeField] private int bullet3Count = 5;
+    private int bandageCount;
+    private int elixirCount;
+    private int buffCount;
 
-    [Header("Temporary Owned Equipment")]
-    [SerializeField] private bool hasKnife = true;
-    [SerializeField] private bool hasWand1 = true;
-    [SerializeField] private bool hasWand2 = true;
-    [SerializeField] private bool hasWand3 = true;
+    private float reserveEnergy1;
+    private float reserveEnergy2;
+    private float reserveEnergy3;
+
+    private bool hasKnife;
+    private bool hasWand1;
+    private bool hasWand2;
+    private bool hasWand3;
+
+    private bool showingInventory = true;
 
     private void Awake()
     {
@@ -72,43 +73,38 @@ public class InventoryUIController : MonoBehaviour
 
     public void ShowInventory()
     {
+        showingInventory = true;
+
         ClearSlots();
         SetTitle("ITEMS");
 
-        CreateItemSlot(medical1Icon, medical1Count);
-        CreateItemSlot(medical2Icon, medical2Count);
+        CreateItemSlot(medical1Icon, bandageCount);
+        CreateItemSlot(medical2Icon, elixirCount);
         CreateItemSlot(buffIcon, buffCount);
 
-        CreateItemSlot(bullet1Icon, bullet1Count);
-        CreateItemSlot(bullet2Icon, bullet2Count);
-        CreateItemSlot(bullet3Icon, bullet3Count);
+        CreateItemSlot(bullet1Icon, Mathf.RoundToInt(reserveEnergy1));
+        CreateItemSlot(bullet2Icon, Mathf.RoundToInt(reserveEnergy2));
+        CreateItemSlot(bullet3Icon, Mathf.RoundToInt(reserveEnergy3));
     }
 
     public void ShowEquipment()
     {
+        showingInventory = false;
+
         ClearSlots();
         SetTitle("EQUIPMENT");
 
-        // 目前用勾选框模拟玩家是否已经收集武器
         if (hasKnife)
-        {
             CreateItemSlot(knifeIcon, 1);
-        }
 
         if (hasWand1)
-        {
             CreateItemSlot(wand1Icon, 1);
-        }
 
         if (hasWand2)
-        {
             CreateItemSlot(wand2Icon, 1);
-        }
 
         if (hasWand3)
-        {
             CreateItemSlot(wand3Icon, 1);
-        }
     }
 
     private void CreateItemSlot(Sprite icon, int count)
@@ -152,6 +148,42 @@ public class InventoryUIController : MonoBehaviour
         if (itemListTitleText != null)
         {
             itemListTitleText.text = title;
+        }
+    }
+
+    public void UpdateInventory(
+    int bandages,
+    int elixirs,
+    int buffs,
+    float reserve1,
+    float reserve2,
+    float reserve3,
+    bool knife,
+    bool wand1,
+    bool wand2,
+    bool wand3)
+    {
+        bandageCount = bandages;
+        elixirCount = elixirs;
+        buffCount = buffs;
+
+        reserveEnergy1 = reserve1;
+        reserveEnergy2 = reserve2;
+        reserveEnergy3 = reserve3;
+
+        hasKnife = knife;
+        hasWand1 = wand1;
+        hasWand2 = wand2;
+        hasWand3 = wand3;
+
+        // Refresh whichever tab is currently open
+        if (showingInventory)
+        {
+            ShowInventory();
+        }
+        else
+        {
+            ShowEquipment();
         }
     }
 }

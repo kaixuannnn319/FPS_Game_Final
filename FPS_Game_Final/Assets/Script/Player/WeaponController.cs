@@ -1,11 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 public class WeaponController : MonoBehaviour
 {
     private InventoryController inventory;
     private PlayerHealth playerHealth;
     private Camera playerCamera;
     private Animator animator;
+
+    public UnityEvent<WeaponType> OnWeaponChanged = new UnityEvent<WeaponType>();
 
 
     [Header("Knife")]
@@ -48,6 +51,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float buffMultiplier = 2f;
     [SerializeField] private float buffDuration = 15f;
 
+    [SerializeField] private InventoryToggle inventoryToggle;
+
     private bool isBuffActive = false;
 
     void Start()
@@ -60,10 +65,15 @@ public class WeaponController : MonoBehaviour
 
         UpdateWeaponStats();
         UpdateWeaponModel();
+
+        OnWeaponChanged?.Invoke(currentWeaponType);
     }
 
     void Update()
     {
+        if (inventoryToggle != null && inventoryToggle.IsOpen)
+            return;
+
         WeaponSwitch();
         Attack();
         Aim();
@@ -87,6 +97,8 @@ public class WeaponController : MonoBehaviour
             {
                 UpdateWeaponStats();
                 UpdateWeaponModel();
+
+                OnWeaponChanged?.Invoke(currentWeaponType);
             }
         }
 
@@ -97,6 +109,8 @@ public class WeaponController : MonoBehaviour
             {
                 UpdateWeaponStats();
                 UpdateWeaponModel();
+
+                OnWeaponChanged?.Invoke(currentWeaponType);
             }
         }
 
@@ -107,6 +121,8 @@ public class WeaponController : MonoBehaviour
             {
                 UpdateWeaponStats();
                 UpdateWeaponModel();
+
+                OnWeaponChanged?.Invoke(currentWeaponType);
             }
         }
 
@@ -117,6 +133,8 @@ public class WeaponController : MonoBehaviour
             {
                 UpdateWeaponStats();
                 UpdateWeaponModel();
+
+                OnWeaponChanged?.Invoke(currentWeaponType);
             }
         }
     }
@@ -228,6 +246,8 @@ public class WeaponController : MonoBehaviour
     {
         UpdateWeaponStats();
         UpdateWeaponModel();
+
+        OnWeaponChanged?.Invoke(currentWeaponType);
     }
 
     private void Attack()

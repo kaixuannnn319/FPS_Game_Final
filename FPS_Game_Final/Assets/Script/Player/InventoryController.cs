@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 public enum WeaponType
 {
     None,
@@ -54,6 +55,8 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private int sealCount = 0;
     [SerializeField] private int buffCount = 0;
     [SerializeField] private int maxBuff = 3;
+
+    public UnityEvent OnInventoryChanged = new UnityEvent();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -171,6 +174,8 @@ public class InventoryController : MonoBehaviour
                 break;
         }
 
+        OnInventoryChanged?.Invoke();
+
         Debug.Log("Unlocked : " + weapon);
     }
 
@@ -211,6 +216,8 @@ public class InventoryController : MonoBehaviour
 
         level1ReserveEnergy = Mathf.Min(level1ReserveEnergy, maxLevel1ReserveEnergy);
 
+        OnInventoryChanged?.Invoke();
+
         return true;
     }
     public bool AddLevel2ReserveEnergy()
@@ -221,6 +228,8 @@ public class InventoryController : MonoBehaviour
         level2ReserveEnergy += level2PickupAmount;
 
         level2ReserveEnergy = Mathf.Min(level2ReserveEnergy, maxLevel2ReserveEnergy);
+
+        OnInventoryChanged?.Invoke();
 
         return true;
     }
@@ -234,6 +243,8 @@ public class InventoryController : MonoBehaviour
 
         level3ReserveEnergy = Mathf.Min(level3ReserveEnergy, maxLevel3ReserveEnergy);
 
+        OnInventoryChanged?.Invoke();
+
         return true;
     }
 
@@ -243,6 +254,9 @@ public class InventoryController : MonoBehaviour
             return false;
 
         bandageCount++;
+
+        OnInventoryChanged?.Invoke();
+
         return true;
     }
 
@@ -252,6 +266,8 @@ public class InventoryController : MonoBehaviour
             return false;
 
         bandageCount--;
+
+        OnInventoryChanged?.Invoke();
 
         Debug.Log("Bandage Left : " + bandageCount);
 
@@ -264,6 +280,9 @@ public class InventoryController : MonoBehaviour
             return false;
 
         elixirCount++;
+
+        OnInventoryChanged?.Invoke();
+
         return true;
     }
 
@@ -273,6 +292,9 @@ public class InventoryController : MonoBehaviour
             return false;
 
         elixirCount--;
+
+        OnInventoryChanged?.Invoke();
+
         Debug.Log("Elixir Left : " + elixirCount);
         return true;
     }
@@ -282,6 +304,9 @@ public class InventoryController : MonoBehaviour
             return false;
 
         buffCount++;
+
+        OnInventoryChanged?.Invoke();
+
         return true;
     }
 
@@ -291,6 +316,9 @@ public class InventoryController : MonoBehaviour
             return false;
 
         buffCount--;
+
+        OnInventoryChanged?.Invoke();
+
         Debug.Log("Buff Left : " + buffCount);
 
         return true;
@@ -299,6 +327,7 @@ public class InventoryController : MonoBehaviour
     public void AddRelic()
     {
         sealCount++;
+        OnInventoryChanged?.Invoke();
     }
 
     public void CollectKey(string keyID)
@@ -376,6 +405,8 @@ public class InventoryController : MonoBehaviour
                 level1Energy += give1;
                 level1ReserveEnergy -= give1;
 
+                OnInventoryChanged?.Invoke();
+
                 Debug.Log($"Level1 Reload : {level1Energy}/100 | Reserve : {level1ReserveEnergy}");
                 return true;
 
@@ -389,6 +420,8 @@ public class InventoryController : MonoBehaviour
 
                 level2Energy += give2;
                 level2ReserveEnergy -= give2;
+
+                OnInventoryChanged?.Invoke();
 
                 Debug.Log($"Level2 Reload : {level2Energy}/100 | Reserve : {level2ReserveEnergy}");
                 return true;
@@ -404,6 +437,8 @@ public class InventoryController : MonoBehaviour
                 level3Energy += give3;
                 level3ReserveEnergy -= give3;
 
+                OnInventoryChanged?.Invoke();
+
                 Debug.Log($"Level3 Reload : {level3Energy}/100 | Reserve : {level3ReserveEnergy}");
                 return true;
         }
@@ -418,18 +453,21 @@ public class InventoryController : MonoBehaviour
 
                 float give1 = Mathf.Min(amount, level1ReserveEnergy);
                 level1ReserveEnergy -= give1;
+                OnInventoryChanged?.Invoke();
                 return give1;
 
             case WeaponType.WandLevel2:
 
                 float give2 = Mathf.Min(amount, level2ReserveEnergy);
                 level2ReserveEnergy -= give2;
+                OnInventoryChanged?.Invoke();
                 return give2;
 
             case WeaponType.WandLevel3:
 
                 float give3 = Mathf.Min(amount, level3ReserveEnergy);
                 level3ReserveEnergy -= give3;
+                OnInventoryChanged?.Invoke();
                 return give3;
         }
 
