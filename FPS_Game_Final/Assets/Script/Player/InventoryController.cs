@@ -252,6 +252,9 @@ public class InventoryController : MonoBehaviour
             return false;
 
         bandageCount--;
+
+        Debug.Log("Bandage Left : " + bandageCount);
+
         return true;
     }
 
@@ -270,6 +273,7 @@ public class InventoryController : MonoBehaviour
             return false;
 
         elixirCount--;
+        Debug.Log("Elixir Left : " + elixirCount);
         return true;
     }
     public bool AddBuff()
@@ -287,6 +291,8 @@ public class InventoryController : MonoBehaviour
             return false;
 
         buffCount--;
+        Debug.Log("Buff Left : " + buffCount);
+
         return true;
     }
 
@@ -324,6 +330,110 @@ public class InventoryController : MonoBehaviour
     {
         return collectedKeys.Contains(keyID);
     }
+    public bool UseEnergy(WeaponType weaponType, float amount)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.WandLevel1:
 
+                if (level1Energy < amount)
+                    return false;
+
+                level1Energy -= amount;
+                return true;
+
+            case WeaponType.WandLevel2:
+
+                if (level2Energy < amount)
+                    return false;
+
+                level2Energy -= amount;
+                return true;
+
+            case WeaponType.WandLevel3:
+
+                if (level3Energy < amount)
+                    return false;
+
+                level3Energy -= amount;
+                return true;
+        }
+
+        return false;
+    }
+    public bool ReloadEnergy(WeaponType weaponType)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.WandLevel1:
+
+                if (level1ReserveEnergy <= 0)
+                    return false;
+
+                float need1 = 100f - level1Energy;
+                float give1 = Mathf.Min(need1, level1ReserveEnergy);
+
+                level1Energy += give1;
+                level1ReserveEnergy -= give1;
+
+                Debug.Log($"Level1 Reload : {level1Energy}/100 | Reserve : {level1ReserveEnergy}");
+                return true;
+
+            case WeaponType.WandLevel2:
+
+                if (level2ReserveEnergy <= 0)
+                    return false;
+
+                float need2 = 100f - level2Energy;
+                float give2 = Mathf.Min(need2, level2ReserveEnergy);
+
+                level2Energy += give2;
+                level2ReserveEnergy -= give2;
+
+                Debug.Log($"Level2 Reload : {level2Energy}/100 | Reserve : {level2ReserveEnergy}");
+                return true;
+
+            case WeaponType.WandLevel3:
+
+                if (level3ReserveEnergy <= 0)
+                    return false;
+
+                float need3 = 100f - level3Energy;
+                float give3 = Mathf.Min(need3, level3ReserveEnergy);
+
+                level3Energy += give3;
+                level3ReserveEnergy -= give3;
+
+                Debug.Log($"Level3 Reload : {level3Energy}/100 | Reserve : {level3ReserveEnergy}");
+                return true;
+        }
+
+        return false;
+    }
+    public float TakeReserveEnergy(WeaponType weaponType, float amount)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.WandLevel1:
+
+                float give1 = Mathf.Min(amount, level1ReserveEnergy);
+                level1ReserveEnergy -= give1;
+                return give1;
+
+            case WeaponType.WandLevel2:
+
+                float give2 = Mathf.Min(amount, level2ReserveEnergy);
+                level2ReserveEnergy -= give2;
+                return give2;
+
+            case WeaponType.WandLevel3:
+
+                float give3 = Mathf.Min(amount, level3ReserveEnergy);
+                level3ReserveEnergy -= give3;
+                return give3;
+        }
+
+        return 0;
+    }
 
 }

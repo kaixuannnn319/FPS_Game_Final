@@ -1,11 +1,12 @@
 using UnityEngine;
-
+using System.Collections;
 public class WeaponController : MonoBehaviour
 {
     private InventoryController inventory;
     private PlayerHealth playerHealth;
     private Camera playerCamera;
     private Animator animator;
+    
 
     [Header("Knife")]
     [SerializeField] private float knifeRange = 2f;
@@ -43,6 +44,12 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float aimFOV = 35f;
     [SerializeField] private float aimSpeed = 10f;
 
+    [Header("Damage Buff")]
+    [SerializeField] private float buffMultiplier = 2f;
+    [SerializeField] private float buffDuration = 15f;
+
+    private bool isBuffActive = false;
+
     void Start()
     {
         inventory = GetComponent<InventoryController>();
@@ -50,7 +57,7 @@ public class WeaponController : MonoBehaviour
         playerCamera = Camera.main;
         animator = GetComponentInChildren<Animator>();
         playerCamera.fieldOfView = normalFOV;
-
+        
         UpdateWeaponStats();
         UpdateWeaponModel();
     }
@@ -61,6 +68,14 @@ public class WeaponController : MonoBehaviour
         Attack();
         Aim();
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ReloadCurrentWeapon();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            UseDamageBuff();
+        }
     }
 
     private void WeaponSwitch()
@@ -219,9 +234,19 @@ public class WeaponController : MonoBehaviour
     {
         if (!Input.GetMouseButtonDown(0))
             return;
+        Debug.Log("Current Weapon = " + currentWeaponType);
 
         if (Time.time < nextFireTime)
             return;
+
+        if (currentWeaponType != WeaponType.Knife)
+        {
+            if (!inventory.UseEnergy(currentWeaponType, currentEnergyCost))
+            {
+                Debug.Log("Not enough Energy!");
+                return;
+            }
+        }
 
         nextFireTime = Time.time + fireCooldown;
 
@@ -261,7 +286,14 @@ public class WeaponController : MonoBehaviour
 
             if (enemy != null)
             {
-                enemy.TakeDamage(currentDamage);
+                int damage = currentDamage;
+
+                if (isBuffActive)
+                {
+                    damage = Mathf.RoundToInt(currentDamage * buffMultiplier);
+                }
+
+                enemy.TakeDamage(damage);
 
                 if (knifeHitEffect != null)
                 {
@@ -329,7 +361,14 @@ public class WeaponController : MonoBehaviour
 
         if (bulletController != null)
         {
-            bulletController.damage = currentDamage;
+            int damage = currentDamage;
+
+            if (isBuffActive)
+            {
+                damage = Mathf.RoundToInt(currentDamage * buffMultiplier);
+            }
+
+            bulletController.damage = damage;
         }
 
         // Ignore collision with the current weapon
@@ -387,4 +426,44 @@ public class WeaponController : MonoBehaviour
             Time.deltaTime * aimSpeed);
     }
 
+    private void ReloadCurrentWeapon()
+    {
+        if (currentWeaponType == WeaponType.Knife)
+            return;
+
+        if (!inventory.ReloadEnergy(currentWeaponType))
+        {
+            Debug.Log("No Reserve Energy!");
+        }
+    }
+
+    private void UseDamageBuff()
+    {
+        if (isBuffActive)
+        {
+            Debug.Log("Buff already active!");
+            return;
+        }
+
+        if (!inventory.UseBuff())
+        {
+            Debug.Log("No Buff!");
+            return;
+        }
+
+        StartCoroutine(DamageBuffRoutine());
+    }
+    private IEnumerator DamageBuffRoutine()
+    {
+        isBuffActive = true;
+
+        Debug.Log("Damage Buff Activated!");
+        Debug.Log("Current Damage x2");
+
+        yield return new WaitForSeconds(buffDuration);
+
+        isBuffActive = false;
+
+        Debug.Log("Damage Buff Ended!");
+    }
 }
