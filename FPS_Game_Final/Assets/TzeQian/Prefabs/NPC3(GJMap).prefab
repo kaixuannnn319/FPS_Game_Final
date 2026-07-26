@@ -1087,8 +1087,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
   dialogueLines:
-  - HIiiii
-  - I'm Third NPC
+  - 'If you see a strange light floating ahead, do not follow it. The light is bait. '
+  - 'The Evil Watcher drifts through the air, its round body covered with countless
+    eyes. '
+  - 'From afar, it unleashes cursed magic. Draw too close, and it will dive through
+    the air to strike you. '
+  - 'After the attack, it retreats and begins its assault again. Beware the venomous
+    stinger upon its back. '
   animator: {fileID: 806169052483653915}
 --- !u!136 &6444169833518703405
 CapsuleCollider:

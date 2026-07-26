@@ -672,8 +672,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
   dialogueLines:
-  - Hello
-  - Im fourth NPC
+  - 'The Demonlord has returned... a creature from Hell, with molten lava flowing
+    through its veins. '
+  - 'It bears blazing wings, a long whip, and a sword stained by an ancient curse. '
+  - 'Whenever the demon appeared, the king would ride out alone to face it. '
+  - 'By morning, the Demonlord was always gone, and the people praised His Majesty
+    for defeating it. '
+  - 'But no one ever witnessed those battles. Whether the king truly defeated it...
+    no living soul can say.  '
   animator: {fileID: 8300276721860374467}
 --- !u!1 &2404118016044844605
 GameObject:

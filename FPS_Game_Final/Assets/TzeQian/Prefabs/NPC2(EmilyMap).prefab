@@ -1135,8 +1135,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
   dialogueLines:
-  - Hi
-  - I'm Second NPC
+  - 'The warrior ahead is no ordinary beast. It was forged for battle. '
+  - 'The Dragonide carries a massive hammer and will not stop once it closes the
+    distance. '
+  - 'Even if you avoid its hammer, do not forget the spiked tail behind it. '
+  - 'Keep out of its reach. At close range, it will attack without giving you time
+    to breathe. '
   animator: {fileID: 4891468732876561002}
 --- !u!1 &4472193932456422280
 GameObject:
