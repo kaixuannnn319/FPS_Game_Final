@@ -1571,7 +1571,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
   dialogueLines:
-  - Hello
+  - 'Traveler... do not mistake its slow steps for weakness. '
+  - 'A towering Cyclop guards the path ahead, with strength enough to crush anything
+    before it. '
+  - 'Every strike can shatter the ground beneath your feet. Keep moving, and never
+    stand in its path. '
+  - 'Watch its movements carefully. Its body may be slow, but one direct blow could
+    be your last. '
   animator: {fileID: 9095521772295793768}
 --- !u!136 &4050422578561605730
 CapsuleCollider:
