@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d142732e0a32767419b7443dd1ecc46d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Archer
-  maxHealth: 100
-  detectionRange: 25
+  maxHealth: 50
+  detectionRange: 20
   testMode: 0
   itemDropPrefab: {fileID: 0}
   dropChance: 1

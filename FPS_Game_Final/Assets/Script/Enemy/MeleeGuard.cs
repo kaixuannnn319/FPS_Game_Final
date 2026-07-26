@@ -21,6 +21,7 @@ public class MeleeGuard : EnemyBase
     public float closeGapTimeout = 3f; // how long it'll keep trying to close in for a short-range attack before settling for a long-range one
     public float[] attackLaunchDistances = new float[] { 0f }; // meters to launch forward during this attack — 0 = no launch, one per variant
     public float attackLaunchDuration = 0.25f; // how many seconds the launch takes to complete
+    public bool[] attackFreeRotation = new bool[] { false }; // true = keep tracking player during this attack's swing, false = lock facing at swing start
     private float lockTimer;
     protected int lastAttackIndex;
     private float closeGapTimer;
@@ -144,6 +145,9 @@ public class MeleeGuard : EnemyBase
                 agent.isStopped = true; // fully stop, not just destination = self
                 lockTimer -= Time.deltaTime;
 
+                if (attackFreeRotation != null && lastAttackIndex < attackFreeRotation.Length && attackFreeRotation[lastAttackIndex])
+                    FacePlayer(); // this attack allows continued tracking during the swing, instead of a locked facing
+
                 if (launchTimer > 0f)
                 {
                     transform.position += launchVelocity * Time.deltaTime;
@@ -168,32 +172,39 @@ public class MeleeGuard : EnemyBase
                     if (DistanceToPlayer() > MaxAttackRange())
                     {
                         agent.isStopped = false;
+                        closeGapTimer = 0f;
                         currentState = State.Chase;
                     }
-                    else if (attackTimer <= 0f)
+                    else if (DistanceToPlayer() > ShortestAttackRange())
                     {
-                        agent.updatePosition = false; // hand control to root motion again for the next swing
-                        SnapFacePlayer(); // lock facing direction once, right as this swing starts
-                        lastAttackIndex = PickAttackIndexInRange();
-                        anim.SetInteger(AttackIndexParam, lastAttackIndex);
-                        anim.SetTrigger(AttackParam);
-                        StartLaunch(lastAttackIndex);
-
-                        float cooldown = (attackCooldowns != null && lastAttackIndex < attackCooldowns.Length)
-                            ? attackCooldowns[lastAttackIndex]
-                            : 1.5f; // fallback if array wasn't sized correctly
-                        attackTimer = cooldown;
-
-                        lockTimer = (attackAnimationLockTimes != null && lastAttackIndex < attackAnimationLockTimes.Length)
-                            ? attackAnimationLockTimes[lastAttackIndex]
-                            : 2.5f; // fallback if array wasn't sized correctly
-                        // Hook actual damage application to an Animation Event on the attack clip
-                        // (call DealDamage() at the moment the weapon hits, not here directly)
+                        // In range for a ranged attack, but melee is still out of reach — don't just
+                        // keep re-firing ranged forever. Count how long that's been true, and once it
+                        // passes the timeout, go back to Chase to try closing the gap again.
+                        closeGapTimer += Time.deltaTime;
+                        if (closeGapTimer >= closeGapTimeout)
+                        {
+                            closeGapTimer = 0f;
+                            agent.isStopped = false;
+                            currentState = State.Chase;
+                        }
+                        else if (attackTimer <= 0f)
+                        {
+                            FireAttack();
+                            closeGapTimer = closeGapTimeout; // only fire once — next time the lock expires, go straight back to Chase
+                        }
+                        else
+                        {
+                            FacePlayer();
+                        }
                     }
-                    // else: lock expired but still on cooldown and still in range — just wait, agent stays synced/idle
                     else
                     {
-                        FacePlayer(); // keep tracking the player between swings, while waiting on cooldown
+                        // Melee is reachable — normal flow, no gap-closing concerns
+                        closeGapTimer = 0f;
+                        if (attackTimer <= 0f)
+                            FireAttack();
+                        else
+                            FacePlayer();
                     }
                 }
                 break;
@@ -205,6 +216,30 @@ public class MeleeGuard : EnemyBase
     protected virtual Vector3 GetChaseDestination()
     {
         return player.position;
+    }
+
+    // Actually fires the currently-chosen attack — picks a variant, triggers the animation,
+    // sets its cooldown/lock time, and kicks off any launch. Shared by both the
+    // "melee reachable" and "ranged-only" paths in the Attack state.
+    private void FireAttack()
+    {
+        agent.updatePosition = false; // hand control to root motion again for the next swing
+        SnapFacePlayer(); // lock facing direction once, right as this swing starts
+        lastAttackIndex = PickAttackIndexInRange();
+        anim.SetInteger(AttackIndexParam, lastAttackIndex);
+        anim.SetTrigger(AttackParam);
+        StartLaunch(lastAttackIndex);
+
+        float cooldown = (attackCooldowns != null && lastAttackIndex < attackCooldowns.Length)
+            ? attackCooldowns[lastAttackIndex]
+            : 1.5f; // fallback if array wasn't sized correctly
+        attackTimer = cooldown;
+
+        lockTimer = (attackAnimationLockTimes != null && lastAttackIndex < attackAnimationLockTimes.Length)
+            ? attackAnimationLockTimes[lastAttackIndex]
+            : 2.5f; // fallback if array wasn't sized correctly
+        // Hook actual damage application to an Animation Event on the attack clip
+        // (call DealDamage() at the moment the weapon hits, not here directly)
     }
 
     private void Patrol()

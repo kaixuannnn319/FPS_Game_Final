@@ -80,7 +80,6 @@ GameObject:
   - component: {fileID: 1808262910034965813}
   - component: {fileID: 3800252882550551672}
   - component: {fileID: 7582060276856799209}
-  - component: {fileID: 2803761884431249797}
   m_Layer: 0
   m_Name: Level2Boss
   m_TagString: Untagged
@@ -96,7 +95,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2406345637205556168}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.57107145, z: -0, w: 0.8209004}
+  m_LocalRotation: {x: 0, y: -0.5710718, z: 0, w: 0.82090014}
   m_LocalPosition: {x: 47.9, y: 1.03, z: 35.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -166,33 +165,18 @@ MonoBehaviour:
   - 0
   - 8
   attackLaunchDuration: 1
+  attackFreeRotation: 00
   attackDamage: 15
   phase2HealthThreshold: 0.5
   phase2SpeedMultiplier: 1.4
   phase2DamageMultiplier: 1.5
---- !u!136 &2803761884431249797
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2406345637205556168}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.62
-  m_Height: 2.6917663
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.84588313, z: 0}
+  rangedAttackIndex: 2
+  pelletPrefab: {fileID: 0}
+  castPoint: {fileID: 0}
+  pelletCount: 6
+  spreadAngle: 20
+  pelletDamage: 8
+  pelletSpeed: 25
 --- !u!1 &5766543433378812781
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +314,38 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1199365600410155290, guid: 9a7a3d9c0236dd840b6a24e9c228f73c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6565423268728321408}
+    - targetCorrespondingSourceObject: {fileID: 1199365600410155270, guid: 9a7a3d9c0236dd840b6a24e9c228f73c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 352891274238173567}
   m_SourcePrefab: {fileID: 100100000, guid: 9a7a3d9c0236dd840b6a24e9c228f73c, type: 3}
+--- !u!1 &2779494992351796387 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1199365600410155270, guid: 9a7a3d9c0236dd840b6a24e9c228f73c, type: 3}
+  m_PrefabInstance: {fileID: 3906801554809562533}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &352891274238173567
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2779494992351796387}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.71
+  m_Height: 3
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 1.7}
 --- !u!1 &2779494992351796415 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1199365600410155290, guid: 9a7a3d9c0236dd840b6a24e9c228f73c, type: 3}

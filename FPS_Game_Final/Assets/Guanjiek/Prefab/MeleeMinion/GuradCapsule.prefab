@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 012dba4c6513e0f46a36e814a1fe90f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeGuard
-  maxHealth: 50
-  detectionRange: 8
+  maxHealth: 70
+  detectionRange: 10
   testMode: 0
   itemDropPrefab: {fileID: 0}
   dropChance: 1
@@ -110,10 +110,17 @@ MonoBehaviour:
   patrolPoints: []
   patrolWaitTime: 0.1
   tauntDuration: 1.2
-  attackRange: 2
+  attackRanges:
+  - 2
   attackVariantCount: 2
-  attackAnimationLockTime: 2.5
-  attackCooldown: 1.5
+  attackCooldowns:
+  - 1.5
+  attackAnimationLockTimes:
+  - 2.5
+  closeGapTimeout: 3
+  attackLaunchDistances:
+  - 0
+  attackLaunchDuration: 0.25
   attackDamage: 15
 --- !u!1001 &5176911409385138363
 PrefabInstance:
