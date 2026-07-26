@@ -6,7 +6,7 @@ public class WeaponController : MonoBehaviour
     private PlayerHealth playerHealth;
     private Camera playerCamera;
     private Animator animator;
-    
+
 
     [Header("Knife")]
     [SerializeField] private float knifeRange = 2f;
@@ -32,7 +32,7 @@ public class WeaponController : MonoBehaviour
     private float currentEnergyCost;
     private float fireCooldown;
 
-    
+
     private GameObject currentBulletPrefab;
 
     [Header("Fire Timer")]
@@ -57,7 +57,7 @@ public class WeaponController : MonoBehaviour
         playerCamera = Camera.main;
         animator = GetComponentInChildren<Animator>();
         playerCamera.fieldOfView = normalFOV;
-        
+
         UpdateWeaponStats();
         UpdateWeaponModel();
     }
@@ -308,19 +308,19 @@ public class WeaponController : MonoBehaviour
     private void WandLevel1Attack()
     {
         animator.SetTrigger("WandAttack");
-        
+
     }
 
     private void WandLevel2Attack()
     {
         animator.SetTrigger("WandAttack");
-        
+
     }
 
     private void WandLevel3Attack()
     {
         animator.SetTrigger("WandAttack");
-        
+
     }
     public void ShootBullet()
     {
