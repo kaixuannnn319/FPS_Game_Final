@@ -11,6 +11,9 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
+        // NEW - while dialogue is open, don't process any interactions at all
+        if (DialogueUI.Instance != null && DialogueUI.Instance.IsDialogueOpen) return;
+
         RaycastHit hit;
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
 
