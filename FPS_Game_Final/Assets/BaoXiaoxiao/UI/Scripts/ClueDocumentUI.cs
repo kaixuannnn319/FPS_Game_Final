@@ -21,8 +21,11 @@ public class ClueDocumentUI : MonoBehaviour
     private bool justClosed; // NEW - guards against the same E press that closes it also reopening it
     private float canCloseAt;
     private float previousTimeScale = 1f;
-    public bool IsOpen => isOpen;
+
+    private GameObject currentPlayer;
+    public bool IsClueOpen => isOpen;
     public bool JustClosedThisFrame => justClosed; // NEW
+
     private void Awake()
     {
         if (documentRoot != null)
@@ -39,10 +42,6 @@ public class ClueDocumentUI : MonoBehaviour
 
         if (!isOpen)
         {
-            if (enableTestKey && Input.GetKeyDown(testOpenKey))
-            {
-                ShowClue(testTitle, testBody);
-            }
             return;
         }
         if (Time.unscaledTime < canCloseAt)
@@ -54,8 +53,16 @@ public class ClueDocumentUI : MonoBehaviour
             CloseClue();
         }
     }
-    public void ShowClue(string clueTitle, string clueBody)
+    public void ShowClue(string clueTitle, string clueBody, GameObject player)
     {
+        currentPlayer = player;
+
+        if (currentPlayer != null)
+        {
+            currentPlayer.GetComponent<PlayerController>()
+                         .SetMovementEnabled(false);
+        }
+
         if (documentRoot == null || titleText == null || bodyText == null)
         {
             Debug.LogError("ClueDocumentUI references are not assigned.");
@@ -66,6 +73,9 @@ public class ClueDocumentUI : MonoBehaviour
         bodyText.text = clueBody;
         documentRoot.SetActive(true);
         isOpen = true;
+
+        Debug.Log("ClueDocumentUI IsClueOpen = " + IsClueOpen);
+
         canCloseAt = Time.unscaledTime + closeInputDelay;
         if (pauseGame && !wasAlreadyOpen)
         {
@@ -86,6 +96,14 @@ public class ClueDocumentUI : MonoBehaviour
         {
             Time.timeScale = previousTimeScale;
         }
+
+        if (currentPlayer != null)
+        {
+            currentPlayer.GetComponent<PlayerController>()
+                         .SetMovementEnabled(true);
+        }
+
+        currentPlayer = null;
     }
     private void OnDestroy()
     {

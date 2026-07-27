@@ -28,7 +28,7 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
         // while a clue is open, don't process any interactions at all
-        if (clueUI != null && clueUI.IsOpen)
+        if (clueUI != null && clueUI.IsClueOpen)
         {
             interactionUI.HidePrompt();
             return;

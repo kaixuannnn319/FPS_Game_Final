@@ -7,17 +7,25 @@ public class ClueScroll : MonoBehaviour, IInteractable
 
     public void Interact(GameObject player)
     {
+        Debug.Log("ClueScroll Interact");
+
         if (clueUI == null)
         {
             Debug.LogError("ClueDocumentUI is not assigned!");
             return;
         }
+
+        Debug.Log("ClueUI Object = " + clueUI.gameObject.name);
+
         if (clueData == null)
         {
             Debug.LogError("ClueData is not assigned!");
             return;
         }
 
-        clueUI.ShowClue(clueData.ClueTitle, clueData.ClueContent);
+        clueUI.ShowClue(
+    clueData.ClueTitle,
+    clueData.ClueContent,
+    player);
     }
 }
