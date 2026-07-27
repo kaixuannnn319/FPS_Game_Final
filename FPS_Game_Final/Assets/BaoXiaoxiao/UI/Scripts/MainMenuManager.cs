@@ -13,6 +13,11 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private TMP_Text audioButtonText;
     [SerializeField] private TMP_Text fullscreenButtonText;
 
+    [Header("Controls Pages")]
+    [SerializeField] private GameObject keyboardImage;
+    [SerializeField] private GameObject mouseImage;
+    [SerializeField] private GameObject controlsNextButton;
+
     [Header("Scene")]
     [SerializeField] private string firstLevelSceneName = "Level 1";
 
@@ -25,6 +30,7 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         audioEnabled = PlayerPrefs.GetInt(AudioKey, 1) == 1;
+
         fullscreenEnabled = PlayerPrefs.GetInt(
             FullscreenKey,
             Screen.fullScreen ? 1 : 0
@@ -54,6 +60,25 @@ public class MainMenuManager : MonoBehaviour
     public void OpenControls()
     {
         SetPanelState(false, false, true);
+        ShowKeyboardControls();
+    }
+
+    public void ShowMouseControls()
+    {
+        if (keyboardImage != null)
+        {
+            keyboardImage.SetActive(false);
+        }
+
+        if (mouseImage != null)
+        {
+            mouseImage.SetActive(true);
+        }
+
+        if (controlsNextButton != null)
+        {
+            controlsNextButton.SetActive(false);
+        }
     }
 
     public void CloseControls()
@@ -89,6 +114,24 @@ public class MainMenuManager : MonoBehaviour
     {
         Application.Quit();
         Debug.Log("Quit Game");
+    }
+
+    private void ShowKeyboardControls()
+    {
+        if (keyboardImage != null)
+        {
+            keyboardImage.SetActive(true);
+        }
+
+        if (mouseImage != null)
+        {
+            mouseImage.SetActive(false);
+        }
+
+        if (controlsNextButton != null)
+        {
+            controlsNextButton.SetActive(true);
+        }
     }
 
     private void ShowMainMenu()
