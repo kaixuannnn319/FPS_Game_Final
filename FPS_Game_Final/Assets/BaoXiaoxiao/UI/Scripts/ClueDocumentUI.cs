@@ -17,24 +17,35 @@ public class ClueDocumentUI : MonoBehaviour
     private string testBody =
         "His Majesty no longer asks how to preserve his health.\n\n" +
         "He asks only whether death itself can be defeated.";
-    private bool isOpen;
+    [SerializeField] private bool isOpen;
     private bool justClosed; // NEW - guards against the same E press that closes it also reopening it
     private float canCloseAt;
     private float previousTimeScale = 1f;
 
     private GameObject currentPlayer;
-    public bool IsClueOpen => isOpen;
+
+    private bool justOpened;
+    public bool IsClueOpen => documentRoot.activeSelf;
     public bool JustClosedThisFrame => justClosed; // NEW
+
+    public static ClueDocumentUI Instance;
 
     private void Awake()
     {
+        Instance = this;
+
         if (documentRoot != null)
-        {
             documentRoot.SetActive(false);
-        }
     }
+
     private void Update()
     {
+        if (justOpened)
+        {
+            justOpened = false;
+            return;
+        }
+
         if (justClosed)
         {
             justClosed = false;
@@ -72,9 +83,14 @@ public class ClueDocumentUI : MonoBehaviour
         titleText.text = clueTitle;
         bodyText.text = clueBody;
         documentRoot.SetActive(true);
+        Debug.Log("ShowClue Instance = " + GetInstanceID());
+        Debug.Log("ShowClue isOpen BEFORE = " + isOpen);
+
         isOpen = true;
 
-        Debug.Log("ClueDocumentUI IsClueOpen = " + IsClueOpen);
+        Debug.Log("ShowClue isOpen AFTER = " + isOpen);
+        Debug.Log("ShowClue Property = " + IsClueOpen);
+        justOpened = true;
 
         canCloseAt = Time.unscaledTime + closeInputDelay;
         if (pauseGame && !wasAlreadyOpen)
@@ -90,8 +106,9 @@ public class ClueDocumentUI : MonoBehaviour
             return;
         }
         documentRoot.SetActive(false);
+
+        justClosed = true;
         isOpen = false;
-        justClosed = true; // NEW
         if (pauseGame)
         {
             Time.timeScale = previousTimeScale;

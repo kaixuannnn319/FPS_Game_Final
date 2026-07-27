@@ -6,7 +6,6 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private InventoryToggle inventoryToggle;
     [SerializeField] private InteractionPromptUI interactionUI;
     [SerializeField] private StoryUIController storyUI;
-    [SerializeField] private ClueDocumentUI clueUI;
     void Start()
     {
         playerCamera = Camera.main;
@@ -28,14 +27,14 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
         // while a clue is open, don't process any interactions at all
-        if (clueUI != null && clueUI.IsClueOpen)
+        if (ClueDocumentUI.Instance != null && ClueDocumentUI.Instance.IsClueOpen)
         {
             interactionUI.HidePrompt();
             return;
         }
         // also skip this frame if the clue JUST closed, so the same E
         // press that closed it can't immediately reopen it
-        if (clueUI != null && clueUI.JustClosedThisFrame)
+        if (ClueDocumentUI.Instance != null && ClueDocumentUI.Instance.JustClosedThisFrame)
         {
             interactionUI.HidePrompt();
             return;

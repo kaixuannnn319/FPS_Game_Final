@@ -59,8 +59,6 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField] private DialogueUI dialogueUI;
 
-    [SerializeField] private ClueDocumentUI clueUI;
-
     private bool isBuffActive = false;
 
     public bool IsBuffActive => isBuffActive;
@@ -81,6 +79,8 @@ public class WeaponController : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("Weapon Update Running");
+
         if (inventoryToggle != null && inventoryToggle.IsOpen)
             return;
 
@@ -90,20 +90,17 @@ public class WeaponController : MonoBehaviour
         if (dialogueUI != null && dialogueUI.IsDialogueOpen)
             return;
 
-        if (clueUI != null)
+        if (ClueDocumentUI.Instance != null)
         {
-            Debug.Log("WeaponController ClueUI = " + clueUI.gameObject.name);
-            Debug.Log("WeaponController sees IsOpen = " + clueUI.IsClueOpen);
-
-            if (clueUI.IsClueOpen)
-            {
-                Debug.Log("Weapon blocked");
-                return;
-            }
+            Debug.Log("Weapon Instance = " + ClueDocumentUI.Instance.GetInstanceID());
+            Debug.Log("Weapon IsOpen = " + ClueDocumentUI.Instance.IsClueOpen);
         }
-        else
+
+        if (ClueDocumentUI.Instance != null &&
+            ClueDocumentUI.Instance.IsClueOpen)
         {
-            Debug.LogError("WeaponController has NO ClueUI reference!");
+            Debug.Log("Blocked by clue");
+            return;
         }
 
         WeaponSwitch();
