@@ -60,6 +60,7 @@ public abstract class EnemyBase : MonoBehaviour
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) player = playerObj.transform;
+        Debug.Log(gameObject.name + " found player: " + (player != null ? player.name : "NULL")); // TEMP — remove once working
 
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
