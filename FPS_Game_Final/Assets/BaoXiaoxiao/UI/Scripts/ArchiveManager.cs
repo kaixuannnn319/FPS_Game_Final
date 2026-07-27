@@ -6,11 +6,11 @@ public class ArchiveManager : MonoBehaviour
 {
     public static ArchiveManager Instance { get; private set; }
 
-    [SerializeField] private List<StoryData> unlockedStories = new();
+    [SerializeField] private List<ClueData> unlockedClues = new();
 
     public event Action ArchiveChanged;
 
-    public IReadOnlyList<StoryData> UnlockedStories => unlockedStories;
+    public IReadOnlyList<ClueData> UnlockedClues => unlockedClues;
 
     private void Awake()
     {
@@ -23,36 +23,60 @@ public class ArchiveManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        unlockedStories.RemoveAll(story => story == null);
+        unlockedClues.RemoveAll(clue => clue == null);
     }
 
-    public bool UnlockStory(StoryData story)
+    public bool UnlockClue(ClueData clue)
     {
-        if (story == null)
+        if (clue == null)
         {
-            Debug.LogError("ArchiveManager: StoryData is missing.", this);
+            Debug.LogError("ArchiveManager: ClueData is missing.", this);
             return false;
         }
 
-        if (unlockedStories.Contains(story))
+        if (ContainsClue(clue))
         {
             return false;
         }
 
-        unlockedStories.Add(story);
+        unlockedClues.Add(clue);
         ArchiveChanged?.Invoke();
 
         return true;
     }
 
-    public bool IsStoryUnlocked(StoryData story)
+    public bool IsClueUnlocked(ClueData clue)
     {
-        return story != null && unlockedStories.Contains(story);
+        return clue != null && ContainsClue(clue);
     }
 
     public void ClearArchive()
     {
-        unlockedStories.Clear();
+        unlockedClues.Clear();
         ArchiveChanged?.Invoke();
+    }
+
+    private bool ContainsClue(ClueData clue)
+    {
+        foreach (ClueData unlockedClue in unlockedClues)
+        {
+            if (unlockedClue == null)
+            {
+                continue;
+            }
+
+            if (unlockedClue == clue)
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(clue.ClueId) &&
+                unlockedClue.ClueId == clue.ClueId)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

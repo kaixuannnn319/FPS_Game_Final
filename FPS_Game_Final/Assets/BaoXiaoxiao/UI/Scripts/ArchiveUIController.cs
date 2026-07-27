@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,10 +8,14 @@ public class ArchiveUIController : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Transform entryContainer;
     [SerializeField] private Button entryButtonPrefab;
+    [SerializeField] private TMP_Text detailTitleText;
     [SerializeField] private TMP_Text detailText;
 
     [Header("Display Settings")]
-    [SerializeField] private string emptyDetailText = "Select a record to view its contents.";
+    [SerializeField] private string emptyDetailTitle = "";
+    [SerializeField]
+    private string emptyDetailText =
+        "Select a clue to view its details.";
 
     private readonly List<Button> spawnedButtons = new();
 
@@ -51,6 +54,11 @@ public class ArchiveUIController : MonoBehaviour
     {
         ClearButtons();
 
+        if (detailTitleText != null)
+        {
+            detailTitleText.text = emptyDetailTitle;
+        }
+
         if (detailText != null)
         {
             detailText.text = emptyDetailText;
@@ -61,21 +69,21 @@ public class ArchiveUIController : MonoBehaviour
             return;
         }
 
-        IReadOnlyList<StoryData> stories =
-            ArchiveManager.Instance.UnlockedStories;
+        IReadOnlyList<ClueData> clues =
+            ArchiveManager.Instance.UnlockedClues;
 
-        foreach (StoryData story in stories)
+        foreach (ClueData clue in clues)
         {
-            if (story == null)
+            if (clue == null)
             {
                 continue;
             }
 
-            CreateEntry(story);
+            CreateEntry(clue);
         }
     }
 
-    private void CreateEntry(StoryData story)
+    private void CreateEntry(ClueData clue)
     {
         if (entryContainer == null ||
             entryButtonPrefab == null ||
@@ -85,6 +93,7 @@ public class ArchiveUIController : MonoBehaviour
                 "ArchiveUIController: UI references are missing.",
                 this
             );
+
             return;
         }
 
@@ -100,47 +109,48 @@ public class ArchiveUIController : MonoBehaviour
 
         if (buttonText != null)
         {
-            buttonText.text = GetRecordLabel(story);
+            buttonText.text = GetClueLabel(clue);
         }
 
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(
-            () => ShowStoryDetails(story)
+            () => ShowClueDetails(clue)
         );
 
         spawnedButtons.Add(button);
     }
 
-    private void ShowStoryDetails(StoryData story)
+    private void ShowClueDetails(ClueData clue)
     {
-        if (detailText == null || story == null)
+        if (clue == null)
         {
             return;
         }
 
-        detailText.text = story.Content;
-    }
-
-    private string GetRecordLabel(StoryData story)
-    {
-        string assetName = story.name;
-        int underscoreIndex = assetName.LastIndexOf('_');
-
-        if (underscoreIndex >= 0 &&
-            underscoreIndex < assetName.Length - 1)
+        if (detailTitleText != null)
         {
-            string numberText =
-                assetName[(underscoreIndex + 1)..];
-
-            if (int.TryParse(numberText, out int number))
-            {
-                return $"RECORD {number:00}";
-            }
+            detailTitleText.text = GetClueLabel(clue);
         }
 
-        return assetName
-            .Replace('_', ' ')
-            .ToUpperInvariant();
+        if (detailText != null)
+        {
+            detailText.text = clue.ClueContent;
+        }
+    }
+
+    private string GetClueLabel(ClueData clue)
+    {
+        if (clue == null)
+        {
+            return "";
+        }
+
+        if (!string.IsNullOrWhiteSpace(clue.ClueTitle))
+        {
+            return clue.ClueTitle;
+        }
+
+        return clue.name.Replace('_', ' ');
     }
 
     private void ClearButtons()
