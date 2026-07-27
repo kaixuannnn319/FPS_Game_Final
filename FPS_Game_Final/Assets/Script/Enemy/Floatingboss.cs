@@ -25,21 +25,41 @@ public class FloatingBoss : MeleeGuard
     public float spellSpeed = 15f;
 
     [Header("Standoff")]
-    [Tooltip("Preferred distance to keep from the player while chasing — won't walk closer than this on its own")]
-    public float preferredDistance = 8f;
+    [Tooltip("If the player gets closer than this, the boss backs away")]
+    public float minComfortDistance = 5f;
+    [Tooltip("How far from the player it retreats TO — should be bigger than Min Comfort Distance, so a small step forward from the player doesn't immediately trigger another retreat")]
+    public float retreatToDistance = 9f;
 
-    // Instead of walking all the way to the player, stop short at preferredDistance —
-    // still lets melee happen if the PLAYER walks in close, just won't close the gap itself.
+    // Three zones instead of always snapping to one exact distance:
+    // - Too close (< minComfortDistance): back away to retreatToDistance (not just a fixed step —
+    //   anchored to the player's position so it always ends up safely past the trigger threshold)
+    // - Comfortable (between minComfortDistance and its attack range): just hold position, don't reposition
+    // - Too far (out of attack range entirely): approach until back in range
     protected override Vector3 GetChaseDestination()
     {
+        float dist = DistanceToPlayer();
+
+        if (dist < minComfortDistance)
+        {
+            Vector3 away = (transform.position - player.position);
+            away.y = 0f;
+            if (away.sqrMagnitude < 0.01f) away = -transform.forward;
+            away.Normalize();
+            return player.position + away * retreatToDistance; // anchored to player, not current position
+        }
+
+        if (dist <= MaxAttackRange())
+        {
+            // Already in a comfortable attacking distance — hold position, don't walk anywhere
+            return transform.position;
+        }
+
+        // Too far — approach until within range (stop a little inside max range, not right at the edge)
         Vector3 dirFromPlayer = (transform.position - player.position);
         dirFromPlayer.y = 0f;
-
-        if (dirFromPlayer.sqrMagnitude < 0.01f)
-            dirFromPlayer = transform.forward; // fallback if standing exactly on top of the player
-
+        if (dirFromPlayer.sqrMagnitude < 0.01f) dirFromPlayer = transform.forward;
         dirFromPlayer.Normalize();
-        return player.position + dirFromPlayer * preferredDistance;
+        return player.position + dirFromPlayer * (MaxAttackRange() * 0.8f);
     }
 
     protected override void Awake()

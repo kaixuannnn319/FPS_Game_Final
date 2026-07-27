@@ -29,7 +29,7 @@ public class MeleeGuard : EnemyBase
     private Vector3 launchVelocity;
 
     // Largest range across all variants — used to decide when to even enter Attack state at all
-    private float MaxAttackRange()
+    protected float MaxAttackRange()
     {
         float max = 0f;
         if (attackRanges == null || attackRanges.Length == 0) return 2f; // fallback
