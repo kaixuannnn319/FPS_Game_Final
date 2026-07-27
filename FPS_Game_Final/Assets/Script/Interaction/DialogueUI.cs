@@ -13,6 +13,9 @@ public class DialogueUI : MonoBehaviour
     private bool justClosed; // NEW - guards against same-frame reopen race condition
     public bool IsDialogueOpen => dialoguePanel.activeSelf;
     public bool JustClosedThisFrame => justClosed; // NEW
+
+    private PlayerController playerController;
+
     private void Awake()
     {
         Instance = this;
@@ -26,7 +29,10 @@ public class DialogueUI : MonoBehaviour
         currentAnimator = speakerAnimator;
         dialoguePanel.SetActive(true);
         dialogueText.text = currentLines[currentIndex];
-        currentPlayer.GetComponent<PlayerController>().SetMovementEnabled(false);
+
+        playerController = player.GetComponent<PlayerController>();
+        playerController.SetMovementEnabled(false);
+
         if (currentAnimator != null) currentAnimator.SetBool("IsTalking", true);
         justOpened = true;
     }
@@ -63,7 +69,9 @@ public class DialogueUI : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
         justClosed = true; // NEW - blocks re-Interact on this same E press
-        currentPlayer.GetComponent<PlayerController>().SetMovementEnabled(true);
+
+        playerController.SetMovementEnabled(true);
+
         if (currentAnimator != null) currentAnimator.SetBool("IsTalking", false);
         currentAnimator = null;
     }

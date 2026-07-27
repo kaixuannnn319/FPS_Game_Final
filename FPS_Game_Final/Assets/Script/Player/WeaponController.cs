@@ -53,7 +53,11 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField] private InventoryToggle inventoryToggle;
 
+    [SerializeField] private BuffStatusUIScript buffStatusUI;
+
     private bool isBuffActive = false;
+
+    public bool IsBuffActive => isBuffActive;
 
     void Start()
     {
@@ -471,6 +475,11 @@ public class WeaponController : MonoBehaviour
             return;
         }
 
+        if (buffStatusUI != null)
+        {
+            buffStatusUI.StartBuffCountdown(buffDuration);
+        }
+
         StartCoroutine(DamageBuffRoutine());
     }
     private IEnumerator DamageBuffRoutine()
@@ -483,6 +492,8 @@ public class WeaponController : MonoBehaviour
         yield return new WaitForSeconds(buffDuration);
 
         isBuffActive = false;
+
+        inventory.OnInventoryChanged?.Invoke();
 
         Debug.Log("Damage Buff Ended!");
     }
