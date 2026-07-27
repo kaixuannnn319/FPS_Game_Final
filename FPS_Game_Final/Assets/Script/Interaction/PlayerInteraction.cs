@@ -3,13 +3,10 @@ using UnityEngine.ProBuilder.Shapes;
 public class PlayerInteraction : MonoBehaviour
 {
     private Camera playerCamera;
-
     [SerializeField] private InventoryToggle inventoryToggle;
-
     [SerializeField] private InteractionPromptUI interactionUI;
-
     [SerializeField] private StoryUIController storyUI;
-
+    [SerializeField] private ClueDocumentUI clueUI;
     void Start()
     {
         playerCamera = Camera.main;
@@ -22,8 +19,7 @@ public class PlayerInteraction : MonoBehaviour
             interactionUI.HidePrompt();
             return;
         }
-
-        // NEW - also skip this frame if dialogue JUST closed, so the same
+        // also skip this frame if dialogue JUST closed, so the same
         // E press that closed it can't immediately reopen it (fixes the
         // infinite dialogue loop bug)
         if (DialogueUI.Instance != null && DialogueUI.Instance.JustClosedThisFrame)
@@ -31,36 +27,44 @@ public class PlayerInteraction : MonoBehaviour
             interactionUI.HidePrompt();
             return;
         }
-
         // while a clue is open, don't process any interactions at all
-        if (ClueUI.Instance != null && ClueUI.Instance.IsClueOpen)
+        if (clueUI != null && clueUI.IsOpen)
         {
             interactionUI.HidePrompt();
             return;
         }
-
+        // also skip this frame if the clue JUST closed, so the same E
+        // press that closed it can't immediately reopen it
+        if (clueUI != null && clueUI.JustClosedThisFrame)
+        {
+            interactionUI.HidePrompt();
+            return;
+        }
         if (inventoryToggle != null && inventoryToggle.IsOpen)
         {
             interactionUI.HidePrompt();
             return;
         }
-
         if (storyUI != null && storyUI.IsStoryOpen)
         {
             interactionUI.HidePrompt();
             return;
         }
-
+        // also skip this frame if the storybook JUST closed, so the
+        // same E press that closed it can't immediately reopen it
+        if (storyUI != null && storyUI.JustClosedThisFrame)
+        {
+            interactionUI.HidePrompt();
+            return;
+        }
         RaycastHit hit;
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         if (Physics.Raycast(ray, out hit, 3f))
         {
             IInteractable target = hit.collider.GetComponentInParent<IInteractable>();
-
             if (target != null)
             {
                 interactionUI.ShowPrompt(GetInteractionText(target));
-
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     target.Interact(gameObject);
@@ -76,7 +80,6 @@ public class PlayerInteraction : MonoBehaviour
             interactionUI.HidePrompt();
         }
     }
-
     private string GetInteractionText(IInteractable target)
     {
         if (target is NPCDialogue) return "TALK";
@@ -89,7 +92,7 @@ public class PlayerInteraction : MonoBehaviour
         if (target is BulletPickup) return "PICK UP";
         if (target is KeyPickup) return "PICK UP";
         if (target is SacredSealPickup) return "PICK UP";
-
+        if (target is StorybookPickup) return "READ";
         return "INTERACT";
     }
 }

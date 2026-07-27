@@ -1,47 +1,60 @@
 using TMPro;
 using UnityEngine;
-
 public class StoryUIController : MonoBehaviour
 {
     [SerializeField] private GameObject documentUI;
     [SerializeField] private TMP_Text storyBody;
-    [SerializeField] private bool enableKeyboardTest = true;
 
-    [TextArea(3, 10)]
-    [SerializeField]
-    private string sampleStory =
-        "His Majesty no longer asks how to preserve his health.\n\n" +
-        "He asks only whether death itself can be defeated.";
+    private string[] currentPages;
+    private int currentIndex;
+    private GameObject currentPlayer;
 
     private bool isOpen;
+    private bool justOpened;
+    private bool justClosed; // guards against same-frame reopen, same fix as DialogueUI
 
     public bool IsStoryOpen => isOpen;
+    public bool JustClosedThisFrame => justClosed;
 
     private void Awake()
     {
-        CloseStory();
+        CloseStoryInternal();
     }
 
     private void Update()
     {
-        Debug.Log("StoryUI Update");
-
-        if (Input.GetKeyDown(KeyCode.P))
+        if (justOpened)
         {
-            Debug.Log("P Pressed");
-            OpenStory("TEST");
+            justOpened = false;
+            return;
         }
 
-        if (!isOpen)
-            return;
+        if (justClosed)
+        {
+            justClosed = false;
+        }
+
+        if (!isOpen) return;
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            CloseStory();
+            currentIndex++;
+            if (currentIndex < currentPages.Length)
+            {
+                storyBody.text = currentPages[currentIndex];
+            }
+            else
+            {
+                CloseStory();
+            }
         }
     }
 
-    public void OpenStory(string content)
+    /// <summary>
+    /// Opens the storybook UI showing the first page, freezes player movement,
+    /// and advances one page per E press until the last page, where E closes it.
+    /// </summary>
+    public void OpenStory(string[] pages, GameObject player)
     {
         if (documentUI == null || storyBody == null)
         {
@@ -49,18 +62,55 @@ public class StoryUIController : MonoBehaviour
             return;
         }
 
-        storyBody.text = content;
+        if (pages == null || pages.Length == 0)
+        {
+            Debug.LogError("StoryUIController: pages array is empty.");
+            return;
+        }
+
+        currentPages = pages;
+        currentIndex = 0;
+        currentPlayer = player;
+
+        storyBody.text = currentPages[currentIndex];
         documentUI.SetActive(true);
         isOpen = true;
+        justOpened = true;
+
+        if (currentPlayer != null)
+        {
+            currentPlayer.GetComponent<PlayerController>().SetMovementEnabled(false);
+        }
+    }
+
+    /// <summary>
+    /// Convenience overload for a single-page story - behaves exactly like
+    /// the original single-string version (press E once to close).
+    /// </summary>
+    public void OpenStory(string content, GameObject player)
+    {
+        OpenStory(new string[] { content }, player);
     }
 
     public void CloseStory()
+    {
+        CloseStoryInternal();
+        justClosed = true;
+
+        if (currentPlayer != null)
+        {
+            currentPlayer.GetComponent<PlayerController>().SetMovementEnabled(true);
+        }
+
+        currentPlayer = null;
+    }
+
+    private void CloseStoryInternal()
     {
         if (documentUI != null)
         {
             documentUI.SetActive(false);
         }
-
         isOpen = false;
     }
 }
