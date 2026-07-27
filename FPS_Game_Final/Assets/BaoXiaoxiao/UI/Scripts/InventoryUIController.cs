@@ -4,14 +4,25 @@ using UnityEngine.UI;
 
 public class InventoryUIController : MonoBehaviour
 {
+    private enum InventoryTab
+    {
+        Inventory,
+        Equipment,
+        Archive
+    }
+
     [Header("UI References")]
     [SerializeField] private ItemSlotUI itemSlotPrefab;
     [SerializeField] private Transform itemGrid;
     [SerializeField] private TMP_Text itemListTitleText;
+    [SerializeField] private GameObject itemListPanel;
+    [SerializeField] private GameObject detailPanel;
+    [SerializeField] private GameObject archiveContent;
 
     [Header("Category Buttons")]
     [SerializeField] private Button inventoryTabButton;
     [SerializeField] private Button equipmentTabButton;
+    [SerializeField] private Button archiveTabButton;
 
     [Header("Inventory Icons")]
     [SerializeField] private Sprite medical1Icon;
@@ -40,7 +51,7 @@ public class InventoryUIController : MonoBehaviour
     private bool hasWand2;
     private bool hasWand3;
 
-    private bool showingInventory = true;
+    private InventoryTab currentTab = InventoryTab.Inventory;
 
     private void Awake()
     {
@@ -54,7 +65,11 @@ public class InventoryUIController : MonoBehaviour
             equipmentTabButton.onClick.AddListener(ShowEquipment);
         }
 
-        // 打开背包时，默认显示 Inventory 页面
+        if (archiveTabButton != null)
+        {
+            archiveTabButton.onClick.AddListener(ShowArchive);
+        }
+
         ShowInventory();
     }
 
@@ -69,11 +84,19 @@ public class InventoryUIController : MonoBehaviour
         {
             equipmentTabButton.onClick.RemoveListener(ShowEquipment);
         }
+
+        if (archiveTabButton != null)
+        {
+            archiveTabButton.onClick.RemoveListener(ShowArchive);
+        }
     }
 
     public void ShowInventory()
     {
-        showingInventory = true;
+        currentTab = InventoryTab.Inventory;
+
+        SetStandardContentVisible(true);
+        SetArchiveVisible(false);
 
         ClearSlots();
         SetTitle("ITEMS");
@@ -82,34 +105,84 @@ public class InventoryUIController : MonoBehaviour
         CreateItemSlot(medical2Icon, elixirCount);
         CreateItemSlot(buffIcon, buffCount);
 
-        CreateItemSlot(bullet1Icon, Mathf.RoundToInt(reserveEnergy1));
-        CreateItemSlot(bullet2Icon, Mathf.RoundToInt(reserveEnergy2));
-        CreateItemSlot(bullet3Icon, Mathf.RoundToInt(reserveEnergy3));
+        CreateItemSlot(
+            bullet1Icon,
+            Mathf.RoundToInt(reserveEnergy1)
+        );
+
+        CreateItemSlot(
+            bullet2Icon,
+            Mathf.RoundToInt(reserveEnergy2)
+        );
+
+        CreateItemSlot(
+            bullet3Icon,
+            Mathf.RoundToInt(reserveEnergy3)
+        );
     }
 
     public void ShowEquipment()
     {
-        showingInventory = false;
+        currentTab = InventoryTab.Equipment;
+
+        SetStandardContentVisible(true);
+        SetArchiveVisible(false);
 
         ClearSlots();
         SetTitle("EQUIPMENT");
 
         if (hasKnife)
+        {
             CreateItemSlot(knifeIcon, 1);
+        }
 
         if (hasWand1)
+        {
             CreateItemSlot(wand1Icon, 1);
+        }
 
         if (hasWand2)
+        {
             CreateItemSlot(wand2Icon, 1);
+        }
 
         if (hasWand3)
+        {
             CreateItemSlot(wand3Icon, 1);
+        }
+    }
+
+    public void ShowArchive()
+    {
+        currentTab = InventoryTab.Archive;
+
+        SetStandardContentVisible(false);
+        SetArchiveVisible(true);
+    }
+
+    private void SetStandardContentVisible(bool visible)
+    {
+        if (itemListPanel != null)
+        {
+            itemListPanel.SetActive(visible);
+        }
+
+        if (detailPanel != null)
+        {
+            detailPanel.SetActive(visible);
+        }
+    }
+
+    private void SetArchiveVisible(bool visible)
+    {
+        if (archiveContent != null)
+        {
+            archiveContent.SetActive(visible);
+        }
     }
 
     private void CreateItemSlot(Sprite icon, int count)
     {
-        // 数量为 0 或没有图片时，不生成格子
         if (icon == null || count <= 0)
         {
             return;
@@ -118,15 +191,19 @@ public class InventoryUIController : MonoBehaviour
         if (itemSlotPrefab == null || itemGrid == null)
         {
             Debug.LogError(
-                "InventoryUIController: ItemSlot Prefab or ItemGrid is not assigned.",
+                "InventoryUIController: ItemSlotPrefab or ItemGrid is not assigned.",
                 this
             );
 
             return;
         }
 
-        ItemSlotUI newSlot = Instantiate(itemSlotPrefab, itemGrid);
-        newSlot.name = "ItemSlot_" + icon.name;
+        ItemSlotUI newSlot = Instantiate(
+            itemSlotPrefab,
+            itemGrid
+        );
+
+        newSlot.name = $"ItemSlot_{icon.name}";
         newSlot.Setup(icon, count);
     }
 
@@ -152,16 +229,17 @@ public class InventoryUIController : MonoBehaviour
     }
 
     public void UpdateInventory(
-    int bandages,
-    int elixirs,
-    int buffs,
-    float reserve1,
-    float reserve2,
-    float reserve3,
-    bool knife,
-    bool wand1,
-    bool wand2,
-    bool wand3)
+        int bandages,
+        int elixirs,
+        int buffs,
+        float reserve1,
+        float reserve2,
+        float reserve3,
+        bool knife,
+        bool wand1,
+        bool wand2,
+        bool wand3
+    )
     {
         bandageCount = bandages;
         elixirCount = elixirs;
@@ -176,14 +254,18 @@ public class InventoryUIController : MonoBehaviour
         hasWand2 = wand2;
         hasWand3 = wand3;
 
-        // Refresh whichever tab is currently open
-        if (showingInventory)
+        switch (currentTab)
         {
-            ShowInventory();
-        }
-        else
-        {
-            ShowEquipment();
+            case InventoryTab.Inventory:
+                ShowInventory();
+                break;
+
+            case InventoryTab.Equipment:
+                ShowEquipment();
+                break;
+
+            case InventoryTab.Archive:
+                break;
         }
     }
 }
