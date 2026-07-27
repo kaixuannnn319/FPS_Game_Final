@@ -24,6 +24,14 @@ public class StoryUIController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log("StoryUI Update");
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log("P Pressed");
+            OpenStory("TEST");
+        }
+
         if (!isOpen)
             return;
 
