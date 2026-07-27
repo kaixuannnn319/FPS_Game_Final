@@ -8,6 +8,8 @@ public class PlayerInteraction : MonoBehaviour
 
     [SerializeField] private InteractionPromptUI interactionUI;
 
+    [SerializeField] private StoryUIController storyUI;
+
     void Start()
     {
         playerCamera = Camera.main;
@@ -38,6 +40,12 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         if (inventoryToggle != null && inventoryToggle.IsOpen)
+        {
+            interactionUI.HidePrompt();
+            return;
+        }
+
+        if (storyUI != null && storyUI.IsStoryOpen)
         {
             interactionUI.HidePrompt();
             return;
@@ -74,10 +82,13 @@ public class PlayerInteraction : MonoBehaviour
         if (target is NPCDialogue) return "TALK";
         if (target is ClueScroll) return "READ";
         if (target is Door) return "OPEN";
+        if (target is ChestController) return "OPEN";
         if (target is BuffPickup) return "PICK UP";
         if (target is HealthPotionPickup) return "PICK UP";
         if (target is WeaponPickup) return "PICK UP";
         if (target is BulletPickup) return "PICK UP";
+        if (target is KeyPickup) return "PICK UP";
+        if (target is SacredSealPickup) return "PICK UP";
 
         return "INTERACT";
     }

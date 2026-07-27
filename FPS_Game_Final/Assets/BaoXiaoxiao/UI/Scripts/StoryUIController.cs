@@ -15,6 +15,8 @@ public class StoryUIController : MonoBehaviour
 
     private bool isOpen;
 
+    public bool IsStoryOpen => isOpen;
+
     private void Awake()
     {
         CloseStory();
@@ -22,21 +24,12 @@ public class StoryUIController : MonoBehaviour
 
     private void Update()
     {
-        if (!enableKeyboardTest)
-        {
+        if (!isOpen)
             return;
-        }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (isOpen)
-            {
-                CloseStory();
-            }
-            else
-            {
-                OpenStory(sampleStory);
-            }
+            CloseStory();
         }
     }
 

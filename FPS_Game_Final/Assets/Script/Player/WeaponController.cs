@@ -55,6 +55,8 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField] private BuffStatusUIScript buffStatusUI;
 
+    [SerializeField] private StoryUIController storyUI;
+
     private bool isBuffActive = false;
 
     public bool IsBuffActive => isBuffActive;
@@ -76,6 +78,9 @@ public class WeaponController : MonoBehaviour
     void Update()
     {
         if (inventoryToggle != null && inventoryToggle.IsOpen)
+            return;
+
+        if (storyUI != null && storyUI.IsStoryOpen)
             return;
 
         WeaponSwitch();

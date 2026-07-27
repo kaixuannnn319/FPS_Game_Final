@@ -5,17 +5,24 @@ public class ClueScroll : MonoBehaviour, IInteractable
     [Header("Clue Content")]
     [SerializeField] private string clueTitle;
 
-    [TextArea(3, 10)]
-    [SerializeField] private string clueText;
+    [SerializeField] private StoryData clueContent;
+
+    [SerializeField] private StoryUIController storyUI;
 
     public void Interact(GameObject player)
     {
-        if (ClueUI.Instance == null)
+        if (storyUI == null)
         {
-            Debug.LogError("ClueUI.Instance not found in scene!");
+            Debug.LogError("StoryUIController is not assigned!");
             return;
         }
 
-        ClueUI.Instance.ShowClue(clueTitle, clueText);
+        if (clueContent == null)
+        {
+            Debug.LogError("StoryData is not assigned!");
+            return;
+        }
+
+        storyUI.OpenStory(clueContent.Content);
     }
 }
