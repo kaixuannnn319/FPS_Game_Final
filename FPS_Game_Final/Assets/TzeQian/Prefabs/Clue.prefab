@@ -113,5 +113,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5c321561dbe3e8429d12bd96c54bdf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClueScroll
-  clueTitle: Title
-  clueText: Textbody
+  clueData: {fileID: 11400000, guid: 247c26383067fc44a92a5f65c556970a, type: 2}
+  clueUI: {fileID: 0}

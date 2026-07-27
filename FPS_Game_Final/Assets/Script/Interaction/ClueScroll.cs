@@ -1,28 +1,23 @@
 using UnityEngine;
-
 public class ClueScroll : MonoBehaviour, IInteractable
 {
     [Header("Clue Content")]
-    [SerializeField] private string clueTitle;
-
-    [SerializeField] private StoryData clueContent;
-
-    [SerializeField] private StoryUIController storyUI;
+    [SerializeField] private ClueData clueData;
+    [SerializeField] private ClueDocumentUI clueUI;
 
     public void Interact(GameObject player)
     {
-        if (storyUI == null)
+        if (clueUI == null)
         {
-            Debug.LogError("StoryUIController is not assigned!");
+            Debug.LogError("ClueDocumentUI is not assigned!");
+            return;
+        }
+        if (clueData == null)
+        {
+            Debug.LogError("ClueData is not assigned!");
             return;
         }
 
-        if (clueContent == null)
-        {
-            Debug.LogError("StoryData is not assigned!");
-            return;
-        }
-
-        storyUI.OpenStory(clueContent.Content);
+        clueUI.ShowClue(clueData.ClueTitle, clueData.ClueContent);
     }
 }
