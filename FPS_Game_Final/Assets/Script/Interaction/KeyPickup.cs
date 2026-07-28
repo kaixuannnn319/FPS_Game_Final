@@ -21,6 +21,7 @@ public class KeyPickup : MonoBehaviour, IInteractable
 
         inventory.CollectKey(keyID);
 
+        player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
         Destroy(gameObject);
     }
 }

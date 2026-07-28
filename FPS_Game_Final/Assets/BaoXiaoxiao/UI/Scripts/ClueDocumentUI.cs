@@ -85,6 +85,7 @@ public class ClueDocumentUI : MonoBehaviour
         documentRoot.SetActive(true);
         
         isOpen = true;
+        player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
 
         justOpened = true;
 

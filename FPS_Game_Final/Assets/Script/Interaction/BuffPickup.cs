@@ -28,6 +28,7 @@ public class BuffPickup : MonoBehaviour, IInteractable
         if (wasAdded)
         {
             Debug.Log("Picked up: Buff");
+            player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
             Destroy(gameObject);
         }
         else

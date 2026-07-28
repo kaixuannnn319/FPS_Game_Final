@@ -6,6 +6,10 @@ public class BulletController : MonoBehaviour
     [SerializeField] private float lifeTime = 5f;
     [SerializeField] private GameObject impactEffect;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip impactSound;
+    [SerializeField][Range(0f, 1f)] private float impactVolume = 1f;
+
     public int damage;
 
     private Rigidbody rb;
@@ -27,7 +31,18 @@ public class BulletController : MonoBehaviour
         EnemyBase enemy = collision.collider.GetComponentInParent<EnemyBase>();
 
         if (enemy != null)
+        {
             enemy.TakeDamage(damage);
+
+            if (impactSound != null)
+            {
+                AudioSource.PlayClipAtPoint(
+                    impactSound,
+                    collision.contacts[0].point,
+                    impactVolume);
+            }
+        }
+            
 
         if (impactEffect != null)
         {

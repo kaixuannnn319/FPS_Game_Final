@@ -7,6 +7,7 @@ public class WeaponController : MonoBehaviour
     private PlayerHealth playerHealth;
     private Camera playerCamera;
     private Animator animator;
+    private AudioSource audioSource;
 
     public UnityEvent<WeaponType> OnWeaponChanged = new UnityEvent<WeaponType>();
 
@@ -59,6 +60,15 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField] private DialogueUI dialogueUI;
 
+    [Header("Weapon Audio")]
+    [SerializeField] private AudioClip knifeSwingClip;
+    [SerializeField] private AudioClip knifeHitClip;
+    [SerializeField] private AudioClip wandCastClip;
+
+    [SerializeField] private float knifeSwingVolume = 1f;
+    [SerializeField] private float knifeHitVolume = 1f;
+    [SerializeField] private float wandCastVolume = 1f;
+
     private bool isBuffActive = false;
 
     public bool IsBuffActive => isBuffActive;
@@ -69,6 +79,7 @@ public class WeaponController : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
         playerCamera = Camera.main;
         animator = GetComponentInChildren<Animator>();
+        audioSource = GetComponent<AudioSource>();
         playerCamera.fieldOfView = normalFOV;
 
         UpdateWeaponStats();
@@ -322,6 +333,11 @@ public class WeaponController : MonoBehaviour
     {
         animator.SetTrigger("KnifeAttack");
 
+        if (knifeSwingClip != null)
+        {
+            audioSource.PlayOneShot(knifeSwingClip, knifeSwingVolume);
+        }
+
         Ray ray = playerCamera.ViewportPointToRay(
             new Vector3(0.5f, 0.5f));
 
@@ -343,6 +359,11 @@ public class WeaponController : MonoBehaviour
                 }
 
                 enemy.TakeDamage(damage);
+
+                if (knifeHitClip != null)
+                {
+                    audioSource.PlayOneShot(knifeHitClip, knifeHitVolume);
+                }
 
                 if (knifeHitEffect != null)
                 {
@@ -400,6 +421,11 @@ public class WeaponController : MonoBehaviour
 
         Vector3 direction =
             (targetPoint - firePoint.position).normalized;
+
+        if (wandCastClip != null)
+        {
+            audioSource.PlayOneShot(wandCastClip, wandCastVolume);
+        }
 
         GameObject bullet = Instantiate(
         currentBulletPrefab,

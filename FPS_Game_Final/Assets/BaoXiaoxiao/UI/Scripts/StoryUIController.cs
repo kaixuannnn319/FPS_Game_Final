@@ -76,6 +76,7 @@ public class StoryUIController : MonoBehaviour
         documentUI.SetActive(true);
         isOpen = true;
         justOpened = true;
+        player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
 
         if (currentPlayer != null)
         {

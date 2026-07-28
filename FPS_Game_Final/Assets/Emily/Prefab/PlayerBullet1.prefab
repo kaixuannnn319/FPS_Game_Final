@@ -130,6 +130,8 @@ MonoBehaviour:
   moveSpeed: 15
   lifeTime: 5
   impactEffect: {fileID: 2680585548655072237, guid: 769349f521a2c9043bb49eaa48269a7b, type: 3}
+  impactSound: {fileID: 8300000, guid: e5dfa22e67b30e84da3e86e7e9569d9b, type: 3}
+  impactVolume: 1
   damage: 0
 --- !u!54 &7889745178452611922
 Rigidbody:

@@ -41,6 +41,7 @@ public class BulletPickup : MonoBehaviour, IInteractable
         if (wasAdded)
         {
             Debug.Log("Picked up: " + bulletLevel + " bullets");
+            player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
             Destroy(gameObject);
         }
         else

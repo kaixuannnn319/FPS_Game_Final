@@ -33,6 +33,7 @@ public class HealthPotionPickup : MonoBehaviour, IInteractable
         if (wasAdded)
         {
             Debug.Log("Picked up: " + healingItemType);
+            player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
             Destroy(gameObject);
         }
         else
