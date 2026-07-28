@@ -403,6 +403,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   damage: 10
   lifeTime: 5
+  stopOnLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!135 &8284628144172032559
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -450,4 +453,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2

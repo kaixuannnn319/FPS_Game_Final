@@ -80,8 +80,10 @@ MonoBehaviour:
   maxHealth: 70
   detectionRange: 10
   testMode: 0
-  itemDropPrefab: {fileID: 0}
-  dropChance: 1
+  itemDropPrefab: {fileID: 2412579654972126574, guid: 82578e09f0d63694f91f31de2fa25ec3, type: 3}
+  dropChance: 0.2
+  isBoss: 0
+  bossID: 0
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -122,7 +124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3086308640955142516, guid: 5f3b0bf3fecf9b243a8623763f5f635b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.0352238
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 3086308640955142516, guid: 5f3b0bf3fecf9b243a8623763f5f635b, type: 3}
       propertyPath: m_LocalPosition.z

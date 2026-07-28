@@ -70,10 +70,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingBoss
   maxHealth: 1200
-  detectionRange: 30
+  detectionRange: 20
   testMode: 0
-  itemDropPrefab: {fileID: 1895794290554737303, guid: 3ad47c23562846045b3959d12a512bdb, type: 3}
+  itemDropPrefab: {fileID: 3739660433627991102, guid: 043012d3916ac27449c34719b12232bb, type: 3}
   dropChance: 1
+  isBoss: 0
+  bossID: 0
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls:
@@ -124,27 +126,27 @@ MonoBehaviour:
   patrolWaitTime: 0
   tauntDuration: 1.2
   attackRanges:
-  - 5
-  - 9
-  - 20
+  - 3
+  - 3
+  - 15
   attackVariantCount: 3
   attackCooldowns:
   - 1.5
   - 1.5
-  - 0
+  - 0.5
   attackAnimationLockTimes:
   - 1
   - 0.9
   - 0
   closeGapTimeout: 1
   attackLaunchDistances:
-  - 5
-  - 9
+  - 3
+  - 3
   - 0
   attackLaunchDuration: 0.25
   attackFreeRotation: 000001
   attackDamage: 15
-  floatHeight: 3
+  floatHeight: 1.5
   meleeSwoopHeight: 0.2
   heightChangeSpeed: 7
   rangedAttackIndex: 2
@@ -152,8 +154,9 @@ MonoBehaviour:
   castPoint: {fileID: 127181478273241263}
   spellDamage: 20
   spellSpeed: 50
-  minComfortDistance: 15
-  retreatToDistance: 30
+  minComfortDistance: 7
+  retreatToDistance: 15
+  arenaSize: {x: 28.2, y: 19.8}
 --- !u!114 &7813998170808544270
 MonoBehaviour:
   m_ObjectHideFlags: 0
