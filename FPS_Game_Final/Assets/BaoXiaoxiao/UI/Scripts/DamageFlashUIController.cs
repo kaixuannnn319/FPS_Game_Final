@@ -24,6 +24,32 @@ public class DamageFlashUIController : MonoBehaviour
     [SerializeField] private bool enableKeyboardTest = true;
     [SerializeField] private KeyCode testKey = KeyCode.J;
 
+    [Header("Player")]
+    [SerializeField] private PlayerHealth playerHealth;
+
+    [Header("Low Health Pulse")]
+    [SerializeField] private int lowHealthThreshold = 25;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float pulseMinAlpha = 0.08f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float pulseMaxAlpha = 0.18f;
+
+    [SerializeField]
+    private float pulseSpeed = 1.5f;
+
+    private Coroutine pulseCoroutine;
+    private bool lowHealthMode;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float lowHealthAlpha = 0.15f;
+
+    private int previousHealth;
+
     private Coroutine flashCoroutine;
 
     private void Awake()
@@ -104,7 +130,10 @@ public class DamageFlashUIController : MonoBehaviour
             fadeOutDuration
         );
 
-        damageCanvasGroup.alpha = 0f;
+        if (!lowHealthMode)
+        {
+            damageCanvasGroup.alpha = 0f;
+        }
         flashCoroutine = null;
     }
 
@@ -146,5 +175,78 @@ public class DamageFlashUIController : MonoBehaviour
         }
 
         damageCanvasGroup.alpha = targetAlpha;
+    }
+
+    private IEnumerator PulseRoutine()
+    {
+        while (lowHealthMode)
+        {
+            float alpha =
+                Mathf.Lerp(
+                    pulseMinAlpha,
+                    pulseMaxAlpha,
+                    (Mathf.Sin(Time.unscaledTime * pulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f
+                );
+
+            damageCanvasGroup.alpha = alpha;
+
+            yield return null;
+        }
+
+        damageCanvasGroup.alpha = 0f;
+        pulseCoroutine = null;
+    }
+
+    private void OnEnable()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChange.AddListener(OnHealthChanged);
+
+            previousHealth = playerHealth.GetCurrentHealth();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChange.RemoveListener(OnHealthChanged);
+        }
+    }
+
+    private void OnHealthChanged(int currentHealth, int maxHealth)
+    {
+        // Damage flash
+        if (currentHealth < previousHealth)
+        {
+            PlayDamageFlash();
+        }
+
+        // Low health warning
+        if (currentHealth <= lowHealthThreshold)
+        {
+            if (!lowHealthMode)
+            {
+                lowHealthMode = true;
+
+                if (pulseCoroutine == null)
+                    pulseCoroutine = StartCoroutine(PulseRoutine());
+            }
+        }
+        else
+        {
+            lowHealthMode = false;
+
+            if (pulseCoroutine != null)
+            {
+                StopCoroutine(pulseCoroutine);
+                pulseCoroutine = null;
+            }
+
+            damageCanvasGroup.alpha = 0f;
+        }
+
+        previousHealth = currentHealth;
     }
 }

@@ -59,7 +59,7 @@ public class ClueDocumentUI : MonoBehaviour
         {
             return;
         }
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             CloseClue();
         }
@@ -83,13 +83,9 @@ public class ClueDocumentUI : MonoBehaviour
         titleText.text = clueTitle;
         bodyText.text = clueBody;
         documentRoot.SetActive(true);
-        Debug.Log("ShowClue Instance = " + GetInstanceID());
-        Debug.Log("ShowClue isOpen BEFORE = " + isOpen);
-
+        
         isOpen = true;
 
-        Debug.Log("ShowClue isOpen AFTER = " + isOpen);
-        Debug.Log("ShowClue Property = " + IsClueOpen);
         justOpened = true;
 
         canCloseAt = Time.unscaledTime + closeInputDelay;
