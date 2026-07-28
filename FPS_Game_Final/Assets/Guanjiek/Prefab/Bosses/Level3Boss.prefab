@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1495408343048929393}
   - component: {fileID: 7782932213744326565}
   - component: {fileID: 6593970025880369154}
+  - component: {fileID: 7813998170808544270}
   m_Layer: 0
   m_Name: Level3Boss
   m_TagString: Untagged
@@ -71,8 +72,53 @@ MonoBehaviour:
   maxHealth: 1200
   detectionRange: 30
   testMode: 0
-  itemDropPrefab: {fileID: 0}
+  itemDropPrefab: {fileID: 1895794290554737303, guid: 3ad47c23562846045b3959d12a512bdb, type: 3}
   dropChance: 1
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: BossHealthUIController, Assembly-CSharp
+        m_MethodName: SetBossHealth
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnPlayerDetected:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7813998170808544270}
+        m_TargetAssemblyTypeName: BossUIHook, Assembly-CSharp
+        m_MethodName: ShowThisBoss
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnEnemyDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: BossHealthUIController, Assembly-CSharp
+        m_MethodName: HideBoss
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   anim: {fileID: 296310593287195679}
   patrolPoints: []
   patrolWaitTime: 0
@@ -85,18 +131,18 @@ MonoBehaviour:
   attackCooldowns:
   - 1.5
   - 1.5
-  - 1.5
+  - 0
   attackAnimationLockTimes:
   - 1
   - 0.9
   - 0
-  closeGapTimeout: 3
+  closeGapTimeout: 1
   attackLaunchDistances:
   - 5
   - 9
   - 0
   attackLaunchDuration: 0.25
-  attackFreeRotation: 00
+  attackFreeRotation: 000001
   attackDamage: 15
   floatHeight: 3
   meleeSwoopHeight: 0.2
@@ -106,7 +152,22 @@ MonoBehaviour:
   castPoint: {fileID: 127181478273241263}
   spellDamage: 20
   spellSpeed: 50
-  preferredDistance: 15
+  minComfortDistance: 15
+  retreatToDistance: 30
+--- !u!114 &7813998170808544270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603289545317029382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb3373c95b10ad14086f08aee669e52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossUIHook
+  bossDisplayName: Evil Watcher
+  bossUI: {fileID: 0}
 --- !u!1 &4438612296905001275
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +443,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5327971420471038865, guid: 12b638ea766c5294081fa918ba0996c0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4354232752496564379}
+    - targetCorrespondingSourceObject: {fileID: 5327971420471038865, guid: 12b638ea766c5294081fa918ba0996c0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3041285983903892416}
+    - targetCorrespondingSourceObject: {fileID: 5327971420471038865, guid: 12b638ea766c5294081fa918ba0996c0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4702748587684427990}
     - targetCorrespondingSourceObject: {fileID: 9057742225477258811, guid: 12b638ea766c5294081fa918ba0996c0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4284270252577971992}
@@ -415,6 +482,188 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloatingBossAttackEvents
   weaponHitboxA: {fileID: 2673733274430978732}
   weaponHitboxB: {fileID: 6824826548909359343}
+--- !u!82 &3041285983903892416
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6464715582953229535}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.002
+      value: 1
+      inSlope: -500.20065
+      outSlope: -500.20065
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.004
+      value: 0.82333374
+      inSlope: -125.05016
+      outSlope: -125.05016
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.008
+      value: 0.57333374
+      inSlope: -31.26254
+      outSlope: -31.26254
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.016
+      value: 0.44833374
+      inSlope: -7.815635
+      outSlope: -7.815635
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.032
+      value: 0.38583374
+      inSlope: -1.9539088
+      outSlope: -1.9539088
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.064
+      value: 0.35458374
+      inSlope: -0.4884772
+      outSlope: -0.4884772
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.128
+      value: 0.33895874
+      inSlope: -0.1221193
+      outSlope: -0.1221193
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.256
+      value: 0.33114624
+      inSlope: -0.030529825
+      outSlope: -0.030529825
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.512
+      value: 0.32724
+      inSlope: -0.0076324563
+      outSlope: -0.0076324563
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.32533374
+      inSlope: -0.002000801
+      outSlope: -0.002000801
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.32333374
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &4702748587684427990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6464715582953229535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11835df263c7e5d4fa4382faa050206e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySFX
+  pitchVariation: 0.1
 --- !u!4 &6855307360279697407 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5721111857303357617, guid: 12b638ea766c5294081fa918ba0996c0, type: 3}
