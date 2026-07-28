@@ -150,15 +150,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneScreenController
   cutsceneImage: {fileID: 1985693306}
   pages:
-  - {fileID: 21300000, guid: bd027f2839ef2544bb433331073dd80b, type: 3}
-  - {fileID: 21300000, guid: 33e7420ae53491343a95ac4f732a64cb, type: 3}
-  - {fileID: 21300000, guid: ad16e087a5415d44ab88906703db677a, type: 3}
-  - {fileID: 21300000, guid: 947c0a866d432204f921bdde2ea28cb1, type: 3}
-  - {fileID: 21300000, guid: 48468a7c933941149ac71bd2ba892112, type: 3}
-  - {fileID: 21300000, guid: 135ccf3d42057674f8a3d9dcefd6e9d8, type: 3}
-  - {fileID: 21300000, guid: fd175ff8426ec8d48ba27fdc6e6dff04, type: 3}
-  - {fileID: 21300000, guid: b8905633580797f44bcb353bd24712c9, type: 3}
-  nextSceneName: Level 1
+  - {fileID: 21300000, guid: 22c5cf135915e5945ad4076af2ff50fd, type: 3}
+  - {fileID: 21300000, guid: ddabd7c6955261e43b303ae0f4fc862d, type: 3}
+  - {fileID: 21300000, guid: 5c2e879edc036694cadba693cda908ae, type: 3}
+  - {fileID: 21300000, guid: f1fd882bbb287df45a94bdffb165093b, type: 3}
+  - {fileID: 21300000, guid: d964f36be158a0a4390a906b6bb468ce, type: 3}
+  - {fileID: 21300000, guid: bbe54ed8f238deb4aad7c1a1283e40b9, type: 3}
+  - {fileID: 21300000, guid: bc38c850022548d45ad068e7ed634385, type: 3}
+  - {fileID: 21300000, guid: af715f759bbc75845a490cf7790eb81e, type: 3}
+  nextSceneName: Bxx_Map
 --- !u!4 &158884676
 Transform:
   m_ObjectHideFlags: 0
