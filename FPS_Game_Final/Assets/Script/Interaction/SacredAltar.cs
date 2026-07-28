@@ -18,6 +18,12 @@ public class SacredAltar : MonoBehaviour, IInteractable
             return;
         }
 
+        if (!GameManager.Instance.finalBossDead)
+        {
+            Debug.Log("Defeat the Demon Lord first!");
+            return;
+        }
+
         if (inventory.GetRelicCount() >= requiredSealCount)
         {
             isActivated = true;

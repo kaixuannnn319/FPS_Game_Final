@@ -13,6 +13,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float respawnDelay = 2f;
     [SerializeField] private Transform defaultSpawnPoint;
 
+    public bool level1BossDead;
+    public int level2BossesDefeated;
+    public bool finalBossDead;
+
     private Transform currentCheckpoint;
     private GameObject player;
     private void Awake()
@@ -45,6 +49,15 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel2()
     {
+        if (player != null)
+        {
+            InventoryController inventory =
+                player.GetComponent<InventoryController>();
+
+            if (inventory != null)
+                inventory.SaveInventory();
+        }
+
         SceneManager.LoadScene(level2Scene);
     }
     public void RegisterPlayer(GameObject newPlayer)
@@ -56,8 +69,18 @@ public class GameManager : MonoBehaviour
 
     public void LoadBossMap()
     {
+        if (player != null)
+        {
+            InventoryController inventory =
+                player.GetComponent<InventoryController>();
+
+            if (inventory != null)
+                inventory.SaveInventory();
+        }
+
         SceneManager.LoadScene(bossScene);
     }
+
     public void RegisterCheckpoint(Transform checkpoint)
     {
         currentCheckpoint = checkpoint;
@@ -122,6 +145,25 @@ public class GameManager : MonoBehaviour
         if (currentCheckpoint == null)
         {
             currentCheckpoint = spawn;
+        }
+    }
+
+    public void OnBossDefeated(BossID boss)
+    {
+        switch (boss)
+        {
+            case BossID.Level1Boss:
+                level1BossDead = true;
+                break;
+
+            case BossID.Level2BossA:
+            case BossID.Level2BossB:
+                level2BossesDefeated++;
+                break;
+
+            case BossID.FinalBoss:
+                finalBossDead = true;
+                break;
         }
     }
 }

@@ -61,7 +61,7 @@ public class InventoryController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        LoadInventory();
     }
 
     // Update is called once per frame
@@ -474,4 +474,53 @@ public class InventoryController : MonoBehaviour
         return 0;
     }
 
+    public void SaveInventory()
+    {
+        PlayerData.hasKnife = HasKnife();
+        PlayerData.hasWand1 = HasLevel1Weapon();
+        PlayerData.hasWand2 = HasLevel2Weapon();
+        PlayerData.hasWand3 = HasLevel3Weapon();
+
+        PlayerData.currentWeapon = GetCurrentWeaponType();
+
+        PlayerData.level1Energy = GetLevel1Energy();
+        PlayerData.level2Energy = GetLevel2Energy();
+        PlayerData.level3Energy = GetLevel3Energy();
+
+        PlayerData.level1Reserve = GetLevel1ReserveEnergy();
+        PlayerData.level2Reserve = GetLevel2ReserveEnergy();
+        PlayerData.level3Reserve = GetLevel3ReserveEnergy();
+
+        PlayerData.hasSave = true;
+    }
+
+    public void LoadInventory()
+    {
+        if (!PlayerData.hasSave)
+            return;
+
+        if (PlayerData.hasKnife)
+            UnlockWeapon(WeaponType.Knife);
+
+        if (PlayerData.hasWand1)
+            UnlockWeapon(WeaponType.WandLevel1);
+
+        if (PlayerData.hasWand2)
+            UnlockWeapon(WeaponType.WandLevel2);
+
+        if (PlayerData.hasWand3)
+            UnlockWeapon(WeaponType.WandLevel3);
+
+        SwitchWeapon(PlayerData.currentWeapon);
+
+        level1Energy = PlayerData.level1Energy;
+        level2Energy = PlayerData.level2Energy;
+        level3Energy = PlayerData.level3Energy;
+
+        level1ReserveEnergy = PlayerData.level1Reserve;
+        level2ReserveEnergy = PlayerData.level2Reserve;
+        level3ReserveEnergy = PlayerData.level3Reserve;
+
+        OnInventoryChanged?.Invoke();
+    }
 }

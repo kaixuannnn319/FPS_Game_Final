@@ -23,6 +23,10 @@ public abstract class EnemyBase : MonoBehaviour
     public GameObject itemDropPrefab;
     [Range(0f, 1f)] public float dropChance = 1f; // 1 = always drops, 0.3 = 30% chance, etc.
 
+    [Header("Boss Progress")]
+    [SerializeField] private bool isBoss = false;
+    [SerializeField] private BossID bossID = BossID.None;
+
     protected float currentHealth;
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
@@ -114,6 +118,11 @@ public abstract class EnemyBase : MonoBehaviour
         agent.isStopped = true;
         anim.SetTrigger(DieParam);
         OnEnemyDeath?.Invoke();
+
+        if (isBoss)
+        {
+            GameManager.Instance.OnBossDefeated(bossID);
+        }
 
         // Disable colliders so it doesn't block the player/bullets after dying
         foreach (var col in GetComponents<Collider>())
