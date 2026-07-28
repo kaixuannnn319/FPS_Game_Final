@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aed0e891b52028740a90999a64da9688, type: 3}
   m_Name: Story_01
   m_EditorClassIdentifier: Assembly-CSharp::StoryData
-  content: 'The doors are not locked to keep us inside.
+  content: 'The Guardian Spirit has hidden the Three Sacred Seals from me for far
+    too long.
 
 
-    They are locked to
-    keep whatever walks the halls from finding us.'
+    Their power should belong to the king, not a guardian.
+
+
+    Tomorrow,
+    I will claim the seals and finally achieve eternal life.'
