@@ -28,8 +28,9 @@ public class EnemySFX : MonoBehaviour
     }
 
     // Not an Animation Event — call this directly from code (e.g. EnemyBase.TakeDamage())
-    // since getting hit isn't tied to a specific animation frame.
-    public void PlaySound(AudioClip[] variations)
+    // since getting hit isn't tied to a specific animation frame. Renamed (not an overload
+    // of PlaySound) because Animation Events don't handle overloaded method names correctly.
+    public void PlayRandomSound(AudioClip[] variations)
     {
         if (variations == null || variations.Length == 0) return;
         PlaySound(variations[Random.Range(0, variations.Length)]);

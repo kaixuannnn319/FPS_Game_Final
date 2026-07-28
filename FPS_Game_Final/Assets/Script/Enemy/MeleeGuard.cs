@@ -97,6 +97,12 @@ public class MeleeGuard : EnemyBase
                 Patrol();
                 if (CanSeePlayer())
                 {
+                    if (!hasFiredDetectedEvent)
+                    {
+                        hasFiredDetectedEvent = true;
+                        OnPlayerDetected?.Invoke();
+                        OnHealthChanged?.Invoke(currentHealth, maxHealth); // send initial value so the bar starts correctly filled
+                    }
                     agent.isStopped = true;
                     anim.SetTrigger(TauntParam);
                     tauntTimer = tauntDuration;
