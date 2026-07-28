@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 // Shared logic for all enemy types: health, death, player detection, animator sync.
 [RequireComponent(typeof(NavMeshAgent))]
@@ -23,6 +24,17 @@ public abstract class EnemyBase : MonoBehaviour
     [Range(0f, 1f)] public float dropChance = 1f; // 1 = always drops, 0.3 = 30% chance, etc.
 
     protected float currentHealth;
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
+
+    [Header("UI Events")]
+    [Tooltip("Fires whenever health changes — (currentHealth, maxHealth). Wire this to BossHealthUIController.SetBossHealth in the Inspector.")]
+    public UnityEvent<float, float> OnHealthChanged;
+    [Tooltip("Fires once, the moment this enemy first detects the player — good for showing a boss health bar. Wire to BossHealthUIController.ShowBoss (needs a name, so use a wrapper or SetBossVisible-equivalent) or just SetBossVisible via a small adapter.")]
+    public UnityEvent OnPlayerDetected;
+    [Tooltip("Fires when this enemy dies — wire to BossHealthUIController.HideBoss.")]
+    public UnityEvent OnEnemyDeath;
+    protected bool hasFiredDetectedEvent;
     protected State currentState = State.Patrol;
     protected Transform player;
     protected NavMeshAgent agent;
@@ -90,6 +102,8 @@ public abstract class EnemyBase : MonoBehaviour
         if (currentState == State.Dead) return;
 
         currentHealth -= amount;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
         if (currentHealth <= 0f)
             Die();
     }
@@ -99,6 +113,7 @@ public abstract class EnemyBase : MonoBehaviour
         currentState = State.Dead;
         agent.isStopped = true;
         anim.SetTrigger(DieParam);
+        OnEnemyDeath?.Invoke();
 
         // Disable colliders so it doesn't block the player/bullets after dying
         foreach (var col in GetComponents<Collider>())
