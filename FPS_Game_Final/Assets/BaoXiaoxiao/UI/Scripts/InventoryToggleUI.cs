@@ -7,9 +7,11 @@ public class InventoryToggleUI : MonoBehaviour
     [SerializeField] private bool pauseGameWhileOpen = true;
 
     private bool isOpen;
+    public bool IsOpen => isOpen;
     private float previousTimeScale = 1f;
     private CursorLockMode previousCursorLockMode;
     private bool previousCursorVisible;
+
 
     private void Awake()
     {
@@ -25,6 +27,14 @@ public class InventoryToggleUI : MonoBehaviour
 
         inventoryPanel.SetActive(false);
         isOpen = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        if (pauseGameWhileOpen)
+        {
+            Time.timeScale = 1f;
+        }
     }
 
     private void Update()

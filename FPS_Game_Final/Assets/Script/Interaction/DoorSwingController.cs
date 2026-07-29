@@ -7,14 +7,22 @@ public class DoorSwingController : MonoBehaviour, IInteractable
     [SerializeField] private float swingDuration = 1f;
     [SerializeField] private bool openInward = true;
 
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip openSound;
+    [SerializeField] private AudioClip closeSound;
+
     private bool isOpen = false;
     private bool isMoving = false;
+    public bool IsOpen => isOpen;
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
 
     void Start()
     {
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
         closedRotation = transform.localRotation;
         float angle = openInward ? openAngle : -openAngle;
         openRotation = closedRotation * Quaternion.Euler(0f, angle, 0f);
@@ -26,11 +34,15 @@ public class DoorSwingController : MonoBehaviour, IInteractable
 
         if (!isOpen)
         {
+            audioSource.PlayOneShot(openSound);
+
             StartCoroutine(Swing(closedRotation, openRotation));
             isOpen = true;
         }
         else
         {
+            audioSource.PlayOneShot(closeSound, 0.5f);
+
             StartCoroutine(Swing(openRotation, closedRotation));
             isOpen = false;
         }

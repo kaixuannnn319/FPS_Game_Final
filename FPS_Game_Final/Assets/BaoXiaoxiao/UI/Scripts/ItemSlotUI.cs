@@ -27,7 +27,7 @@ public class ItemSlotUI : MonoBehaviour
         bool shouldShowCount = count > 1;
 
         countText.text = shouldShowCount
-            ? $"¡Á{count}"
+            ? count.ToString()
             : string.Empty;
 
         countText.gameObject.SetActive(shouldShowCount);

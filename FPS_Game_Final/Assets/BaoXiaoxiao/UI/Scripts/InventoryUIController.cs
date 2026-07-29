@@ -38,23 +38,15 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private Sprite wand2Icon;
     [SerializeField] private Sprite wand3Icon;
 
-    private int bandageCount;
-    private int elixirCount;
-    private int buffCount;
-
-    private float reserveEnergy1;
-    private float reserveEnergy2;
-    private float reserveEnergy3;
-
-    private bool hasKnife;
-    private bool hasWand1;
-    private bool hasWand2;
-    private bool hasWand3;
+    [SerializeField] private InventoryController inventory;
 
     private InventoryTab currentTab = InventoryTab.Inventory;
 
     private void Awake()
     {
+        if (inventory == null)
+            inventory = FindFirstObjectByType<InventoryController>();
+
         if (inventoryTabButton != null)
         {
             inventoryTabButton.onClick.AddListener(ShowInventory);
@@ -101,24 +93,13 @@ public class InventoryUIController : MonoBehaviour
         ClearSlots();
         SetTitle("ITEMS");
 
-        CreateItemSlot(medical1Icon, bandageCount);
-        CreateItemSlot(medical2Icon, elixirCount);
-        CreateItemSlot(buffIcon, buffCount);
+        CreateItemSlot(medical1Icon, inventory.GetBandageCount());
+        CreateItemSlot(medical2Icon, inventory.GetElixirCount());
+        CreateItemSlot(buffIcon, inventory.GetBuffCount());
 
-        CreateItemSlot(
-            bullet1Icon,
-            Mathf.RoundToInt(reserveEnergy1)
-        );
-
-        CreateItemSlot(
-            bullet2Icon,
-            Mathf.RoundToInt(reserveEnergy2)
-        );
-
-        CreateItemSlot(
-            bullet3Icon,
-            Mathf.RoundToInt(reserveEnergy3)
-        );
+        CreateItemSlot(bullet1Icon, Mathf.RoundToInt(inventory.GetLevel1ReserveEnergy()));
+        CreateItemSlot(bullet2Icon, Mathf.RoundToInt(inventory.GetLevel2ReserveEnergy()));
+        CreateItemSlot(bullet3Icon, Mathf.RoundToInt(inventory.GetLevel3ReserveEnergy()));
     }
 
     public void ShowEquipment()
@@ -131,25 +112,19 @@ public class InventoryUIController : MonoBehaviour
         ClearSlots();
         SetTitle("EQUIPMENT");
 
-        if (hasKnife)
+        if (inventory.HasKnife())
         {
             CreateItemSlot(knifeIcon, 1);
         }
 
-        if (hasWand1)
-        {
+        if (inventory.HasLevel1Weapon())
             CreateItemSlot(wand1Icon, 1);
-        }
 
-        if (hasWand2)
-        {
+        if (inventory.HasLevel2Weapon())
             CreateItemSlot(wand2Icon, 1);
-        }
 
-        if (hasWand3)
-        {
+        if (inventory.HasLevel3Weapon())
             CreateItemSlot(wand3Icon, 1);
-        }
     }
 
     public void ShowArchive()
@@ -228,31 +203,28 @@ public class InventoryUIController : MonoBehaviour
         }
     }
 
-    public void UpdateInventory(
-        int bandages,
-        int elixirs,
-        int buffs,
-        float reserve1,
-        float reserve2,
-        float reserve3,
-        bool knife,
-        bool wand1,
-        bool wand2,
-        bool wand3
-    )
+    private void OnEnable()
     {
-        bandageCount = bandages;
-        elixirCount = elixirs;
-        buffCount = buffs;
+        if (inventory != null)
+        {
+            inventory.OnInventoryChanged.AddListener(RefreshUI);
+        }
 
-        reserveEnergy1 = reserve1;
-        reserveEnergy2 = reserve2;
-        reserveEnergy3 = reserve3;
+        RefreshUI();
+    }
 
-        hasKnife = knife;
-        hasWand1 = wand1;
-        hasWand2 = wand2;
-        hasWand3 = wand3;
+    private void OnDisable()
+    {
+        if (inventory != null)
+        {
+            inventory.OnInventoryChanged.RemoveListener(RefreshUI);
+        }
+    }
+
+    private void RefreshUI()
+    {
+        if (inventory == null)
+            return;
 
         switch (currentTab)
         {

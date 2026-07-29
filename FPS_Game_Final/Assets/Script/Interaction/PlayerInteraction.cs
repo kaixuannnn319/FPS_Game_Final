@@ -83,7 +83,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (target is NPCDialogue) return "TALK";
         if (target is ClueScroll) return "READ";
-        if (target is Door) return "OPEN";
+        if (target is DoorController) return "OPEN";
         if (target is ChestController) return "OPEN";
         if (target is BuffPickup) return "PICK UP";
         if (target is HealthPotionPickup) return "PICK UP";
@@ -92,6 +92,9 @@ public class PlayerInteraction : MonoBehaviour
         if (target is KeyPickup) return "PICK UP";
         if (target is SacredSealPickup) return "PICK UP";
         if (target is StorybookPickup) return "READ";
+        if (target is DoorSwingController door)
+            return door.IsOpen ? "CLOSE" : "OPEN";
+
         return "INTERACT";
     }
 }

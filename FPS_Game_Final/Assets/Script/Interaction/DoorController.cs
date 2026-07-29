@@ -7,12 +7,17 @@ public class DoorController : MonoBehaviour, IInteractable
     [SerializeField] private float slideDistance = 2f;
     [SerializeField] private float slideDuration = 1f;
 
+    [SerializeField] private AudioSource audioSource;
+
     private bool isOpen = false;
     private Vector3 closedPosition;
     private Vector3 openPosition;
 
     void Start()
     {
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
         closedPosition = transform.position;
         openPosition = closedPosition + transform.right * slideDistance;
     }
@@ -43,7 +48,8 @@ public class DoorController : MonoBehaviour, IInteractable
 
     private IEnumerator SlideDoor()
     {
-        
+        audioSource?.Play();
+
         float elapsed = 0f;
 
         while (elapsed < slideDuration)

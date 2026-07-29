@@ -23,6 +23,11 @@ public class ClueScroll : MonoBehaviour, IInteractable
             return;
         }
 
+        if (ArchiveManager.Instance != null)
+        {
+            ArchiveManager.Instance.UnlockClue(clueData);
+        }
+
         clueUI.ShowClue(
     clueData.ClueTitle,
     clueData.ClueContent,
