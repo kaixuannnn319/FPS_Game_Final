@@ -12,6 +12,9 @@ public class InventoryToggleUI : MonoBehaviour
     private CursorLockMode previousCursorLockMode;
     private bool previousCursorVisible;
 
+    private float ignoreInputUntil;
+    public bool IgnoreGameplayInput => Time.unscaledTime < ignoreInputUntil;
+
 
     private void Awake()
     {
@@ -96,6 +99,8 @@ public class InventoryToggleUI : MonoBehaviour
 
             Cursor.lockState = previousCursorLockMode;
             Cursor.visible = previousCursorVisible;
+
+            ignoreInputUntil = Time.unscaledTime + 0.15f;
         }
     }
 
