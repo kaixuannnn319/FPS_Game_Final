@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 012dba4c6513e0f46a36e814a1fe90f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeGuard
-  maxHealth: 70
+  maxHealth: 15
   detectionRange: 10
   testMode: 0
   itemDropPrefab: {fileID: 2412579654972126574, guid: 82578e09f0d63694f91f31de2fa25ec3, type: 3}

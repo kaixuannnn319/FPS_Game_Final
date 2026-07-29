@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58738470d6f946140a6bda6807ed99b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingBoss
-  maxHealth: 1200
+  maxHealth: 500
   detectionRange: 20
   testMode: 0
   itemDropPrefab: {fileID: 3739660433627991102, guid: 043012d3916ac27449c34719b12232bb, type: 3}

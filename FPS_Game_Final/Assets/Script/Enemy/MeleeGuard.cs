@@ -143,7 +143,11 @@ public class MeleeGuard : EnemyBase
                 {
                     closeGapTimer = 0f;
                     if (!CanSeePlayer())
+                    {
+                        hasFiredDetectedEvent = false; // allow re-detection to fire the event again later
+                        OnPlayerLost?.Invoke();
                         currentState = State.Patrol; // lost the player, go back to patrolling
+                    }
                 }
                 break;
 
@@ -217,11 +221,44 @@ public class MeleeGuard : EnemyBase
         }
     }
 
-    // Where to walk toward while chasing. Default: straight to the player.
+    [Header("Arena Bounds")]
+    [Tooltip("Size of the allowed area (X = width, Z = depth), centered on its spawn point. Set X or Z to 0 for no limit on that axis.")]
+    public Vector2 arenaSize = new Vector2(30f, 30f);
+
+    // Clamps a destination so it never leaves the arena box — measured from spawnPosition, not the
+    // player, so the boss can't get pulled/pushed outside its intended area no matter how far the player runs.
+    protected Vector3 ClampToArena(Vector3 destination)
+    {
+        float halfX = arenaSize.x / 2f;
+        float halfZ = arenaSize.y / 2f; // Vector2.y represents depth (Z) here
+
+        if (arenaSize.x > 0f)
+            destination.x = Mathf.Clamp(destination.x, spawnPosition.x - halfX, spawnPosition.x + halfX);
+
+        if (arenaSize.y > 0f)
+            destination.z = Mathf.Clamp(destination.z, spawnPosition.z - halfZ, spawnPosition.z + halfZ);
+
+        return destination;
+    }
+
+    // Where to walk toward while chasing. Default: straight to the player, clamped to the arena.
     // Override in subclasses (e.g. a ranged/caster boss) to stop short and keep distance instead.
     protected virtual Vector3 GetChaseDestination()
     {
-        return player.position;
+        return ClampToArena(player.position);
+    }
+
+    protected virtual void OnDrawGizmosSelected()
+    {
+        if (arenaSize.x <= 0f && arenaSize.y <= 0f) return;
+        Gizmos.color = Color.cyan;
+        Vector3 center = Application.isPlaying ? spawnPosition : transform.position;
+        Vector3 size = new Vector3(
+            arenaSize.x > 0f ? arenaSize.x : 200f,
+            0.1f,
+            arenaSize.y > 0f ? arenaSize.y : 200f
+        );
+        Gizmos.DrawWireCube(center, size);
     }
 
     // Actually fires the currently-chosen attack — picks a variant, triggers the animation,
