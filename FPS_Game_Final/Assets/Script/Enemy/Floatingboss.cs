@@ -30,26 +30,6 @@ public class FloatingBoss : MeleeGuard
     [Tooltip("How far from the player it retreats TO — should be bigger than Min Comfort Distance, so a small step forward from the player doesn't immediately trigger another retreat")]
     public float retreatToDistance = 9f;
 
-    [Header("Arena Bounds")]
-    [Tooltip("Size of the allowed area (X = width, Z = depth), centered on its spawn point. Set X or Z to 0 for no limit on that axis.")]
-    public Vector2 arenaSize = new Vector2(30f, 30f);
-
-    // Clamps a destination so it never leaves the arena box — measured from spawnPosition, not the
-    // player, so the boss can't get pulled/pushed outside its intended area no matter how far the player runs.
-    private Vector3 ClampToArena(Vector3 destination)
-    {
-        float halfX = arenaSize.x / 2f;
-        float halfZ = arenaSize.y / 2f; // Vector2.y represents depth (Z) here
-
-        if (arenaSize.x > 0f)
-            destination.x = Mathf.Clamp(destination.x, spawnPosition.x - halfX, spawnPosition.x + halfX);
-
-        if (arenaSize.y > 0f)
-            destination.z = Mathf.Clamp(destination.z, spawnPosition.z - halfZ, spawnPosition.z + halfZ);
-
-        return destination;
-    }
-
     // Three zones instead of always snapping to one exact distance:
     // - Too close (< minComfortDistance): back away to retreatToDistance (not just a fixed step —
     //   anchored to the player's position so it always ends up safely past the trigger threshold)
@@ -139,18 +119,5 @@ public class FloatingBoss : MeleeGuard
 
         if (spell.TryGetComponent(out Projectile proj))
             proj.damage = spellDamage;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (arenaSize.x <= 0f && arenaSize.y <= 0f) return;
-        Gizmos.color = Color.cyan;
-        Vector3 center = Application.isPlaying ? spawnPosition : transform.position;
-        Vector3 size = new Vector3(
-            arenaSize.x > 0f ? arenaSize.x : 200f, // draw very wide if that axis is unlimited, just so it's visible
-            0.1f,
-            arenaSize.y > 0f ? arenaSize.y : 200f
-        );
-        Gizmos.DrawWireCube(center, size);
     }
 }

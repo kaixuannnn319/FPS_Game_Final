@@ -34,8 +34,10 @@ public abstract class EnemyBase : MonoBehaviour
     [Header("UI Events")]
     [Tooltip("Fires whenever health changes — (currentHealth, maxHealth). Wire this to BossHealthUIController.SetBossHealth in the Inspector.")]
     public UnityEvent<float, float> OnHealthChanged;
-    [Tooltip("Fires once, the moment this enemy first detects the player — good for showing a boss health bar. Wire to BossHealthUIController.ShowBoss (needs a name, so use a wrapper or SetBossVisible-equivalent) or just SetBossVisible via a small adapter.")]
+    [Tooltip("Fires once, the moment this enemy first detects the player — good for showing a boss health bar. Wire to BossUIHook.ShowThisBoss.")]
     public UnityEvent OnPlayerDetected;
+    [Tooltip("Fires when this enemy loses sight of the player and returns to patrol — wire to BossHealthUIController.HideBoss too, so the bar hides when disengaged.")]
+    public UnityEvent OnPlayerLost;
     [Tooltip("Fires when this enemy dies — wire to BossHealthUIController.HideBoss.")]
     public UnityEvent OnEnemyDeath;
     protected bool hasFiredDetectedEvent;
