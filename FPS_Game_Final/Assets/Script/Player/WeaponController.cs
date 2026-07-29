@@ -52,7 +52,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float buffMultiplier = 2f;
     [SerializeField] private float buffDuration = 15f;
 
-    [SerializeField] private InventoryToggle inventoryToggle;
+    [SerializeField] private InventoryToggleUI inventoryToggle;
 
     [SerializeField] private BuffStatusUIScript buffStatusUI;
 
@@ -92,25 +92,22 @@ public class WeaponController : MonoBehaviour
     {
         Debug.Log("Weapon Update Running");
 
-        if (inventoryToggle != null && inventoryToggle.IsOpen)
-            return;
-
         if (storyUI != null && storyUI.IsStoryOpen)
             return;
 
         if (dialogueUI != null && dialogueUI.IsDialogueOpen)
             return;
 
-        if (ClueDocumentUI.Instance != null)
-        {
-            Debug.Log("Weapon Instance = " + ClueDocumentUI.Instance.GetInstanceID());
-            Debug.Log("Weapon IsOpen = " + ClueDocumentUI.Instance.IsClueOpen);
-        }
-
         if (ClueDocumentUI.Instance != null &&
             ClueDocumentUI.Instance.IsClueOpen)
         {
             Debug.Log("Blocked by clue");
+            return;
+        }
+
+        if (inventoryToggle != null &&
+    (inventoryToggle.IsOpen || inventoryToggle.IgnoreGameplayInput))
+        {
             return;
         }
 
@@ -394,6 +391,19 @@ public class WeaponController : MonoBehaviour
     }
     public void ShootBullet()
     {
+        if (inventoryToggle != null && inventoryToggle.IsOpen)
+            return;
+
+        if (storyUI != null && storyUI.IsStoryOpen)
+            return;
+
+        if (dialogueUI != null && dialogueUI.IsDialogueOpen)
+            return;
+
+        if (ClueDocumentUI.Instance != null &&
+            ClueDocumentUI.Instance.IsClueOpen)
+            return;
+
         Debug.Log("FirePoint = " + firePoint);
 
         if (firePoint == null)
