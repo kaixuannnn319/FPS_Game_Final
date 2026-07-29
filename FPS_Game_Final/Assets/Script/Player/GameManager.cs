@@ -121,9 +121,20 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Move player
-        player.transform.position = spawnPoint.position;
+        CharacterController cc = player.GetComponent<CharacterController>();
+
+        if (cc != null)
+        {
+            cc.enabled = false;
+        }
+
+        player.transform.position = spawnPoint.position + Vector3.up * 0.2f;
         player.transform.rotation = spawnPoint.rotation;
+
+        if (cc != null)
+        {
+            cc.enabled = true;
+        }
 
         // Restore checkpoint inventory after enemy death
         if (lastDeathType == DeathType.Enemy)

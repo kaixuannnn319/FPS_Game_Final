@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,12 +30,19 @@ public class PauseMenuController : MonoBehaviour
     private const string FullscreenKey = "FullscreenEnabled";
 
     private bool isPaused;
+    public bool IsPaused => isPaused;
+
+    private float ignoreInputUntil;
+    public bool IgnoreGameplayInput => Time.unscaledTime < ignoreInputUntil;
+
     private bool audioEnabled;
     private bool fullscreenEnabled;
 
     private float previousTimeScale = 1f;
     private CursorLockMode previousCursorLockMode;
     private bool previousCursorVisible;
+
+    [SerializeField] private GameObject crosshair;
 
     private void Start()
     {
@@ -70,6 +78,11 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = previousTimeScale;
         Cursor.lockState = previousCursorLockMode;
         Cursor.visible = previousCursorVisible;
+
+        ignoreInputUntil = Time.unscaledTime + 0.15f;
+
+        if (crosshair != null)
+            crosshair.SetActive(true);
     }
 
     public void OpenPauseSettings()
@@ -78,6 +91,9 @@ public class PauseMenuController : MonoBehaviour
         {
             return;
         }
+
+        if (crosshair != null)
+            crosshair.SetActive(false);
 
         SetPauseUIState(true, false, true, false);
         UpdateSettingTexts();

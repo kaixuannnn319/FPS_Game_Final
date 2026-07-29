@@ -60,6 +60,8 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField] private DialogueUI dialogueUI;
 
+    [SerializeField] private PauseMenuController pauseMenu;
+
     [Header("Weapon Audio")]
     [SerializeField] private AudioClip knifeSwingClip;
     [SerializeField] private AudioClip knifeHitClip;
@@ -107,6 +109,12 @@ public class WeaponController : MonoBehaviour
 
         if (inventoryToggle != null &&
     (inventoryToggle.IsOpen || inventoryToggle.IgnoreGameplayInput))
+        {
+            return;
+        }
+
+        if (pauseMenu != null &&
+    (pauseMenu.IsPaused || pauseMenu.IgnoreGameplayInput))
         {
             return;
         }
@@ -403,6 +411,12 @@ public class WeaponController : MonoBehaviour
         if (ClueDocumentUI.Instance != null &&
             ClueDocumentUI.Instance.IsClueOpen)
             return;
+
+        if (pauseMenu != null &&
+    (pauseMenu.IsPaused || pauseMenu.IgnoreGameplayInput))
+        {
+            return;
+        }
 
         Debug.Log("FirePoint = " + firePoint);
 
