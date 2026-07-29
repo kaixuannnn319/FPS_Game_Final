@@ -82,10 +82,15 @@ MonoBehaviour:
   testMode: 0
   itemDropPrefab: {fileID: 0}
   dropChance: 1
+  isBoss: 0
+  bossID: 0
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
   OnPlayerDetected:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPlayerLost:
     m_PersistentCalls:
       m_Calls: []
   OnEnemyDeath:
@@ -99,6 +104,7 @@ MonoBehaviour:
   shootPoint: {fileID: 4284555281586924757}
   projectilePrefab: {fileID: 6275771782878689551, guid: d84c50c3c1a29bf41b65bf21f599b2f0, type: 3}
   returnDistanceThreshold: 0.3
+  allowMovement: 1
 --- !u!1 &8817897390664467334
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,9 +365,6 @@ PrefabInstance:
       addedObject: {fileID: 9126741687629328327}
     - targetCorrespondingSourceObject: {fileID: 100122, guid: d9c734fad72bb454792c4ac49776adf6, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4894198089720949776}
-    - targetCorrespondingSourceObject: {fileID: 100122, guid: d9c734fad72bb454792c4ac49776adf6, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 920968562396666851}
     - targetCorrespondingSourceObject: {fileID: 100122, guid: d9c734fad72bb454792c4ac49776adf6, type: 3}
       insertIndex: -1
@@ -387,18 +390,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fba5dec002a881846a8341c5d928a5b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArcherAttackEvents
---- !u!114 &4894198089720949776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2820486139557415331}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c186f52551901b441a5c773a9ad34c9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RootMotionRelay
 --- !u!136 &920968562396666851
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -18,6 +18,10 @@ public class Archer : EnemyBase
     [Header("Return To Spawn")]
     public float returnDistanceThreshold = 0.3f; // how close to spawn counts as "arrived"
 
+    [Header("Movement")]
+    [Tooltip("Turn OFF to lock this specific archer in place permanently — it will only rotate and shoot, never chase or reposition, even while detecting the player.")]
+    public bool allowMovement = true;
+
     protected override void Awake()
     {
         base.Awake();
@@ -37,8 +41,18 @@ public class Archer : EnemyBase
             case State.Patrol: // used here as "idle at spawn"
                 if (CanSeePlayer())
                 {
-                    agent.isStopped = false; // allowed to move now
-                    currentState = DistanceToPlayer() <= attackRange ? State.Attack : State.Chase;
+                    if (allowMovement)
+                    {
+                        agent.isStopped = false; // allowed to move now
+                        currentState = DistanceToPlayer() <= attackRange ? State.Attack : State.Chase;
+                    }
+                    else if (DistanceToPlayer() <= attackRange)
+                    {
+                        // Locked in place: only ever attack if the player happens to be in range —
+                        // never chase or reposition to get there.
+                        currentState = State.Attack;
+                    }
+                    // else: player detected but out of range and movement is locked — just wait
                 }
                 break;
 
@@ -64,7 +78,7 @@ public class Archer : EnemyBase
                 FacePlayer();
                 if (DistanceToPlayer() > attackRange)
                 {
-                    currentState = State.Chase;
+                    currentState = allowMovement ? State.Chase : State.Patrol;
                 }
                 else if (attackTimer <= 0f)
                 {
@@ -119,8 +133,8 @@ public class Archer : EnemyBase
     {
         if (projectilePrefab == null || shootPoint == null || player == null) return;
 
-        GameObject arrow = Instantiate(projectilePrefab, shootPoint.position, shootPoint.rotation);
         Vector3 dir = (player.position + Vector3.up - shootPoint.position).normalized;
+        GameObject arrow = Instantiate(projectilePrefab, shootPoint.position, Quaternion.LookRotation(dir));
 
         if (arrow.TryGetComponent(out Rigidbody rb))
             rb.linearVelocity = dir * projectileSpeed; // use rb.velocity if on Unity < 6
