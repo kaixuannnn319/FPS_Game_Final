@@ -29,5 +29,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Bxx_Map.unity
     guid: 9db474bae15c87b43a5318a3d9b29d62
+  - enabled: 1
+    path: Assets/Scenes/VictoryScene.unity
+    guid: a05fd6395ef79734e80e6df9d7bd9b8c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
