@@ -3161,7 +3161,7 @@ MonoBehaviour:
   keyboardImage: {fileID: 966854169}
   mouseImage: {fileID: 722786129}
   controlsNextButton: {fileID: 380957381}
-  firstLevelSceneName: Cutscene1
+  firstLevelSceneName: Level 1
 --- !u!4 &1214412192
 Transform:
   m_ObjectHideFlags: 0

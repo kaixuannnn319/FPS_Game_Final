@@ -19,7 +19,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private GameObject controlsNextButton;
 
     [Header("Scene")]
-    [SerializeField] private string firstLevelSceneName = "Level 1";
+    [SerializeField] private string firstLevelSceneName = "Cutscene1";
 
     private const string AudioKey = "AudioEnabled";
     private const string FullscreenKey = "FullscreenEnabled";
