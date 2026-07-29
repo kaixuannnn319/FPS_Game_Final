@@ -3,7 +3,7 @@ using UnityEngine;
 public class BulletController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 15f;
-    [SerializeField] private float lifeTime = 5f;
+    [SerializeField] private float lifeTime = 3f;
     [SerializeField] private GameObject impactEffect;
 
     [Header("Audio")]

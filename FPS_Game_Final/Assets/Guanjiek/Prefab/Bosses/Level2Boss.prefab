@@ -139,9 +139,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Boss
   maxHealth: 400
-  detectionRange: 12
+  detectionRange: 20
   testMode: 0
-  itemDropPrefab: {fileID: 0}
+  itemDropPrefab: {fileID: 3294278252034041283, guid: 65504b35c7bf446439a54a4b85d64d10, type: 3}
   dropChance: 1
   isBoss: 0
   bossID: 0
@@ -177,7 +177,19 @@ MonoBehaviour:
         m_CallState: 2
   OnPlayerLost:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: BossHealthUIController, Assembly-CSharp
+        m_MethodName: HideBoss
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnEnemyDeath:
     m_PersistentCalls:
       m_Calls:
