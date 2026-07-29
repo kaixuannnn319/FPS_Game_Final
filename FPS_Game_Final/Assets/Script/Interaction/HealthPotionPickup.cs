@@ -34,7 +34,7 @@ public class HealthPotionPickup : MonoBehaviour, IInteractable
         {
             Debug.Log("Picked up: " + healingItemType);
             player.GetComponent<PlayerPickupAudio>()?.PlayPickupSound();
-            Destroy(gameObject);
+            GetComponent<RespawnablePickup>().Collect();
         }
         else
         {

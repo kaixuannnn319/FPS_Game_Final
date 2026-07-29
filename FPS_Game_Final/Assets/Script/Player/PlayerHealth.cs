@@ -106,7 +106,7 @@ public class PlayerHealth : MonoBehaviour
 
         OnPlayerDeath?.Invoke();
 
-        GameManager.Instance.PlayerDied();
+        GameManager.Instance.PlayerDied(DeathType.Enemy);
     }
 
     //Getter

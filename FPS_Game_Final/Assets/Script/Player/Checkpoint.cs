@@ -16,6 +16,14 @@ public class Checkpoint : MonoBehaviour
 
         GameManager.Instance.RegisterCheckpoint(transform);
 
+        InventoryController inventory =
+            other.GetComponent<InventoryController>();
+
+        if (inventory != null)
+        {
+            inventory.SaveCheckpointInventory();
+        }
+
         Debug.Log("Checkpoint Activated : " + gameObject.name);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created

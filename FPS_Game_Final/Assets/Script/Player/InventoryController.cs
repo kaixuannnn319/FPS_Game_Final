@@ -10,6 +10,22 @@ public enum WeaponType
     WandLevel3
 }
 
+[System.Serializable]
+public class InventorySnapshot
+{
+    public float level1Energy;
+    public float level2Energy;
+    public float level3Energy;
+
+    public float level1Reserve;
+    public float level2Reserve;
+    public float level3Reserve;
+
+    public int bandages;
+    public int elixirs;
+    public int buffs;
+}
+
 public class InventoryController : MonoBehaviour
 {
     [Header("Energy Pickup Amount")]
@@ -57,6 +73,9 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private int maxBuff = 3;
 
     public UnityEvent OnInventoryChanged = new UnityEvent();
+
+    private InventorySnapshot checkpointSnapshot;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -175,6 +194,8 @@ public class InventoryController : MonoBehaviour
         }
 
         OnInventoryChanged?.Invoke();
+
+        SaveInventory();
 
         Debug.Log("Unlocked : " + weapon);
     }
@@ -328,6 +349,8 @@ public class InventoryController : MonoBehaviour
     {
         sealCount++;
         OnInventoryChanged?.Invoke();
+
+        SaveInventory();
     }
 
     public void CollectKey(string keyID)
@@ -353,6 +376,8 @@ public class InventoryController : MonoBehaviour
         }
 
         Debug.Log("Collected Key : " + keyID);
+
+        SaveInventory();
     }
 
     public bool HasKey(string keyID)
@@ -369,6 +394,7 @@ public class InventoryController : MonoBehaviour
                     return false;
 
                 level1Energy -= amount;
+                OnInventoryChanged?.Invoke();
                 return true;
 
             case WeaponType.WandLevel2:
@@ -377,6 +403,7 @@ public class InventoryController : MonoBehaviour
                     return false;
 
                 level2Energy -= amount;
+                OnInventoryChanged?.Invoke();
                 return true;
 
             case WeaponType.WandLevel3:
@@ -385,6 +412,7 @@ public class InventoryController : MonoBehaviour
                     return false;
 
                 level3Energy -= amount;
+                OnInventoryChanged?.Invoke();
                 return true;
         }
 
@@ -522,5 +550,53 @@ public class InventoryController : MonoBehaviour
         level3ReserveEnergy = PlayerData.level3Reserve;
 
         OnInventoryChanged?.Invoke();
+    }
+
+    public void SaveCheckpointInventory()
+    {
+        checkpointSnapshot = new InventorySnapshot();
+
+        checkpointSnapshot.level1Energy = level1Energy;
+        checkpointSnapshot.level2Energy = level2Energy;
+        checkpointSnapshot.level3Energy = level3Energy;
+
+        checkpointSnapshot.level1Reserve = level1ReserveEnergy;
+        checkpointSnapshot.level2Reserve = level2ReserveEnergy;
+        checkpointSnapshot.level3Reserve = level3ReserveEnergy;
+
+        checkpointSnapshot.bandages = bandageCount;
+        checkpointSnapshot.elixirs = elixirCount;
+        checkpointSnapshot.buffs = buffCount;
+
+        Debug.Log("Checkpoint Inventory Saved");
+    }
+
+    public void RestoreCheckpointInventory()
+    {
+        if (checkpointSnapshot == null)
+            return;
+
+        level1Energy = checkpointSnapshot.level1Energy;
+        level2Energy = checkpointSnapshot.level2Energy;
+        level3Energy = checkpointSnapshot.level3Energy;
+
+        level1ReserveEnergy = checkpointSnapshot.level1Reserve;
+        level2ReserveEnergy = checkpointSnapshot.level2Reserve;
+        level3ReserveEnergy = checkpointSnapshot.level3Reserve;
+
+        bandageCount = checkpointSnapshot.bandages;
+        elixirCount = checkpointSnapshot.elixirs;
+        buffCount = checkpointSnapshot.buffs;
+
+        OnInventoryChanged?.Invoke();
+
+        WeaponController weapon = GetComponent<WeaponController>();
+
+        if (weapon != null)
+        {
+            weapon.RefreshWeapon();
+        }
+
+        Debug.Log("Checkpoint Inventory Restored");
     }
 }

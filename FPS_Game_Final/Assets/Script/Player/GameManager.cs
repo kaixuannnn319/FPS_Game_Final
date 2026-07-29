@@ -1,6 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum DeathType
+{
+    Enemy,
+    Water
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -10,12 +16,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string bossScene = "Bxx_Map";
 
     [Header("Respawn")]
-    [SerializeField] private float respawnDelay = 2f;
+    [SerializeField] private float respawnDelay = 1f;
     [SerializeField] private Transform defaultSpawnPoint;
 
     public bool level1BossDead;
     public int level2BossesDefeated;
     public bool finalBossDead;
+
+    private DeathType lastDeathType;
 
     private Transform currentCheckpoint;
     private GameObject player;
@@ -87,9 +95,11 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Checkpoint Updated : " + checkpoint.name);
     }
-    public void PlayerDied()
+    public void PlayerDied(DeathType deathType)
     {
-        Debug.Log("Player Died");
+        lastDeathType = deathType;
+
+        Debug.Log("Player Died : " + deathType);
 
         Invoke(nameof(RespawnPlayer), respawnDelay);
     }
@@ -114,6 +124,23 @@ public class GameManager : MonoBehaviour
         // Move player
         player.transform.position = spawnPoint.position;
         player.transform.rotation = spawnPoint.rotation;
+
+        // Restore checkpoint inventory after enemy death
+        if (lastDeathType == DeathType.Enemy)
+        {
+            InventoryController inventory =
+                player.GetComponent<InventoryController>();
+
+            if (inventory != null)
+            {
+                inventory.RestoreCheckpointInventory();
+            }
+
+            if (PickupManager.Instance != null)
+            {
+                PickupManager.Instance.ResetPickups();
+            }
+        }
 
         // Restore HP
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();

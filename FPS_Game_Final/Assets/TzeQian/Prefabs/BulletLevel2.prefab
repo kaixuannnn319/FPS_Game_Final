@@ -204,6 +204,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -6922187488808801084, guid: dfd7c116998fb3541ba8493486b94ac4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5333555643944959248}
+    - targetCorrespondingSourceObject: {fileID: -6922187488808801084, guid: dfd7c116998fb3541ba8493486b94ac4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2985124395840701466}
   m_SourcePrefab: {fileID: -8670829309088485133, guid: dfd7c116998fb3541ba8493486b94ac4, type: 3}
 --- !u!4 &996463021324510640 stripped
 Transform:
@@ -249,3 +252,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletPickup
   bulletLevel: 1
+--- !u!114 &2985124395840701466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129688610138193923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e742bc03dbf9da49bcd2b295b524466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RespawnablePickup

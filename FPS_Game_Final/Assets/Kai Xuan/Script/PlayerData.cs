@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public static class PlayerData
 {
     public static bool hasSave = false;
@@ -18,4 +20,13 @@ public static class PlayerData
     public static float level1Reserve;
     public static float level2Reserve;
     public static float level3Reserve;
+
+    public static bool hasKey1;
+    public static bool hasKey2;
+    public static bool hasKey3;
+
+    public static int relicCount;
+
+    // Later:
+    public static List<string> unlockedClues;
 }

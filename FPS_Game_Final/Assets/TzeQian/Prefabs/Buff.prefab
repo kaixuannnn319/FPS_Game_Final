@@ -74,6 +74,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -6922187488808801084, guid: 776cd5856ee60bb47b9afbb7beb586de, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3954999025486244646}
+    - targetCorrespondingSourceObject: {fileID: -6922187488808801084, guid: 776cd5856ee60bb47b9afbb7beb586de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6425533877702568412}
   m_SourcePrefab: {fileID: -8670829309088485133, guid: 776cd5856ee60bb47b9afbb7beb586de, type: 3}
 --- !u!1 &448497596735101721 stripped
 GameObject:
@@ -113,3 +116,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9170cfb5fccbacd4eb2cf728095c5049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuffPickup
+--- !u!114 &6425533877702568412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448497596735101721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e742bc03dbf9da49bcd2b295b524466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RespawnablePickup
