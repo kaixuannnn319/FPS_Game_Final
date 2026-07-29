@@ -405,7 +405,7 @@ MonoBehaviour:
   lifeTime: 5
   stopOnLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 192
 --- !u!135 &8284628144172032559
 SphereCollider:
   m_ObjectHideFlags: 0
