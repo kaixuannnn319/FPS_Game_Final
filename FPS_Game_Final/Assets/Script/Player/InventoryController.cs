@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
+
 public enum WeaponType
 {
     None,
@@ -28,25 +29,15 @@ public class InventorySnapshot
 
 public class InventoryController : MonoBehaviour
 {
+    // Index convention used throughout this script for the three wand levels: 0 = Level1, 1 = Level2, 2 = Level3.
+
     [Header("Energy Pickup Amount")]
-    [SerializeField] private float level1PickupAmount = 5f;
-    [SerializeField] private float level2PickupAmount = 10f;
-    [SerializeField] private float level3PickupAmount = 20f;
+    [SerializeField] private float[] pickupAmount = { 10f, 5f, 2f };
 
     [Header("Magic Energy")]
-    // Current
-    [SerializeField] private float level1Energy = 100f;
-    [SerializeField] private float level2Energy = 100f;
-    [SerializeField] private float level3Energy = 100f;
-    // Reserve
-    [SerializeField] private float level1ReserveEnergy = 0f;
-    [SerializeField] private float level2ReserveEnergy = 0f;
-    [SerializeField] private float level3ReserveEnergy = 0f;
-    // Max Reserve Energy
-    [SerializeField] private float maxLevel1ReserveEnergy = 100f;
-    [SerializeField] private float maxLevel2ReserveEnergy = 200f;
-    [SerializeField] private float maxLevel3ReserveEnergy = 200f;
-
+    [SerializeField] private float[] energy = { 100f, 100f, 100f };
+    [SerializeField] private float[] reserveEnergy = { 0f, 0f, 0f };
+    [SerializeField] private float[] maxReserveEnergy = { 200f, 400f, 360f };
 
     [Header("Healing Items")]
     [SerializeField] private int bandageCount = 0;
@@ -56,11 +47,8 @@ public class InventoryController : MonoBehaviour
 
     [Header("Weapon Unlock")]
     [SerializeField] private bool hasKnife = false;
-    [SerializeField] private bool hasWandLevel1 = false;
-    [SerializeField] private bool hasWandLevel2 = false;
-    [SerializeField] private bool hasWandLevel3 = false;
+    [SerializeField] private bool[] hasWandLevel = { false, false, false };
     [SerializeField] private WeaponType currentWeaponType = WeaponType.None;
-
 
     [Header("Quest Items")]
     private List<string> collectedKeys = new List<string>();
@@ -76,272 +64,149 @@ public class InventoryController : MonoBehaviour
 
     private InventorySnapshot checkpointSnapshot;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         LoadInventory();
     }
 
-    // Update is called once per frame
-    void Update()
+    // ---- Weapon level index helper ----
+    // Maps WandLevel1/2/3 to 0/1/2. Returns -1 for anything else (None, Knife).
+    private int LevelIndex(WeaponType type)
     {
-        
+        switch (type)
+        {
+            case WeaponType.WandLevel1: return 0;
+            case WeaponType.WandLevel2: return 1;
+            case WeaponType.WandLevel3: return 2;
+            default: return -1;
+        }
     }
 
-    public int GetBuffCount()
-    {
-        return buffCount;
-    }
+    // ---- Getters ----
+    public int GetBuffCount() => buffCount;
+    public WeaponType GetCurrentWeaponType() => currentWeaponType;
 
-    public WeaponType GetCurrentWeaponType()
-    {
-        return currentWeaponType;
-    }
+    public float GetLevel1Energy() => energy[0];
+    public float GetLevel2Energy() => energy[1];
+    public float GetLevel3Energy() => energy[2];
 
-    public float GetLevel1Energy()
-    {
-        return level1Energy;
-    }
-    public float GetLevel2Energy()
-    {
-        return level2Energy;
-    }
-    public float GetLevel3Energy()
-    {
-        return level3Energy;
-    }
-    public float GetLevel1ReserveEnergy()
-    {
-        return level1ReserveEnergy;
-    }
+    public float GetLevel1ReserveEnergy() => reserveEnergy[0];
+    public float GetLevel2ReserveEnergy() => reserveEnergy[1];
+    public float GetLevel3ReserveEnergy() => reserveEnergy[2];
 
-    public float GetLevel2ReserveEnergy()
-    {
-        return level2ReserveEnergy;
-    }
+    public int GetBandageCount() => bandageCount;
+    public int GetElixirCount() => elixirCount;
 
-    public float GetLevel3ReserveEnergy()
-    {
-        return level3ReserveEnergy;
-    }
-    public int GetBandageCount()
-    {
-        return bandageCount;
-    }
-    public int GetElixirCount()
-    {
-        return elixirCount;
-    }
-    public bool HasKnife()
-    {
-        return hasKnife;
-    }
+    public bool HasKnife() => hasKnife;
+    public bool HasLevel1Weapon() => hasWandLevel[0];
+    public bool HasLevel2Weapon() => hasWandLevel[1];
+    public bool HasLevel3Weapon() => hasWandLevel[2];
 
-    public bool HasLevel1Weapon()
-    {
-        return hasWandLevel1;
-    }
+    public int GetMaxBandage() => maxBandage;
+    public int GetMaxElixir() => maxElixir;
+    public int GetRelicCount() => sealCount;
+    public int GetMaxBuff() => maxBuff;
 
-    public bool HasLevel2Weapon()
-    {
-        return hasWandLevel2;
-    }
-
-    public bool HasLevel3Weapon()
-    {
-        return hasWandLevel3;
-    }
-
-    public int GetMaxBandage()
-    {
-        return maxBandage;
-    }
-
-    public int GetMaxElixir()
-    {
-        return maxElixir;
-    }
-
-    public int GetRelicCount()
-    {
-        return sealCount;
-    }
-
-    public int GetMaxBuff()
-    {
-        return maxBuff;
-    }
+    // ---- Weapons ----
     public void UnlockWeapon(WeaponType weapon)
     {
-        switch (weapon)
+        if (weapon == WeaponType.Knife)
         {
-            case WeaponType.Knife:
-                hasKnife = true;
-                break;
-
-            case WeaponType.WandLevel1:
-                hasWandLevel1 = true;
-                break;
-
-            case WeaponType.WandLevel2:
-                hasWandLevel2 = true;
-                break;
-
-            case WeaponType.WandLevel3:
-                hasWandLevel3 = true;
-                break;
+            hasKnife = true;
+        }
+        else
+        {
+            int i = LevelIndex(weapon);
+            if (i >= 0) hasWandLevel[i] = true;
         }
 
         OnInventoryChanged?.Invoke();
-
         SaveInventory();
 
         Debug.Log("Unlocked : " + weapon);
     }
 
-
-
     public bool SwitchWeapon(WeaponType weapon)
     {
-        switch (weapon)
+        bool unlocked = weapon switch
         {
-            case WeaponType.Knife:
-                if (!hasKnife) return false;
-                break;
+            WeaponType.Knife => hasKnife,
+            WeaponType.WandLevel1 => hasWandLevel[0],
+            WeaponType.WandLevel2 => hasWandLevel[1],
+            WeaponType.WandLevel3 => hasWandLevel[2],
+            _ => true // WeaponType.None always allowed
+        };
 
-            case WeaponType.WandLevel1:
-                if (!hasWandLevel1) return false;
-                break;
-
-            case WeaponType.WandLevel2:
-                if (!hasWandLevel2) return false;
-                break;
-
-            case WeaponType.WandLevel3:
-                if (!hasWandLevel3) return false;
-                break;
-        }
+        if (!unlocked) return false;
 
         currentWeaponType = weapon;
         Debug.Log("Current Weapon : " + currentWeaponType);
         return true;
     }
 
-    public bool AddLevel1ReserveEnergy()
+    // ---- Reserve energy pickups ----
+    public bool AddLevel1ReserveEnergy() => AddReserveEnergy(0);
+    public bool AddLevel2ReserveEnergy() => AddReserveEnergy(1);
+    public bool AddLevel3ReserveEnergy() => AddReserveEnergy(2);
+
+    private bool AddReserveEnergy(int i)
     {
-        if (level1ReserveEnergy >= maxLevel1ReserveEnergy)
-            return false;
+        if (reserveEnergy[i] >= maxReserveEnergy[i]) return false;
 
-        level1ReserveEnergy += level1PickupAmount;
-
-        level1ReserveEnergy = Mathf.Min(level1ReserveEnergy, maxLevel1ReserveEnergy);
-
+        reserveEnergy[i] = Mathf.Min(reserveEnergy[i] + pickupAmount[i], maxReserveEnergy[i]);
         OnInventoryChanged?.Invoke();
-
-        return true;
-    }
-    public bool AddLevel2ReserveEnergy()
-    {
-        if (level2ReserveEnergy >= maxLevel2ReserveEnergy)
-            return false;
-
-        level2ReserveEnergy += level2PickupAmount;
-
-        level2ReserveEnergy = Mathf.Min(level2ReserveEnergy, maxLevel2ReserveEnergy);
-
-        OnInventoryChanged?.Invoke();
-
         return true;
     }
 
-    public bool AddLevel3ReserveEnergy()
-    {
-        if (level3ReserveEnergy >= maxLevel3ReserveEnergy)
-            return false;
-
-        level3ReserveEnergy += level3PickupAmount;
-
-        level3ReserveEnergy = Mathf.Min(level3ReserveEnergy, maxLevel3ReserveEnergy);
-
-        OnInventoryChanged?.Invoke();
-
-        return true;
-    }
-
+    // ---- Healing items ----
     public bool AddBandage()
     {
-        if (bandageCount >= maxBandage)
-            return false;
-
+        if (bandageCount >= maxBandage) return false;
         bandageCount++;
-
         OnInventoryChanged?.Invoke();
-
         return true;
     }
 
     public bool UseBandage()
     {
-        if (bandageCount <= 0)
-            return false;
-
+        if (bandageCount <= 0) return false;
         bandageCount--;
-
         OnInventoryChanged?.Invoke();
-
         Debug.Log("Bandage Left : " + bandageCount);
-
         return true;
     }
 
     public bool AddElixir()
     {
-        if (elixirCount >= maxElixir)
-            return false;
-
+        if (elixirCount >= maxElixir) return false;
         elixirCount++;
-
         OnInventoryChanged?.Invoke();
-
         return true;
     }
 
     public bool UseElixir()
     {
-        if (elixirCount <= 0)
-            return false;
-
+        if (elixirCount <= 0) return false;
         elixirCount--;
-
         OnInventoryChanged?.Invoke();
-
         Debug.Log("Elixir Left : " + elixirCount);
         return true;
     }
+
     public bool AddBuff()
     {
-        if (buffCount >= maxBuff)
-            return false;
-
+        if (buffCount >= maxBuff) return false;
         buffCount++;
-
         OnInventoryChanged?.Invoke();
-
         return true;
     }
 
     public bool UseBuff()
     {
-        if (buffCount <= 0)
-            return false;
-
+        if (buffCount <= 0) return false;
         buffCount--;
-
         OnInventoryChanged?.Invoke();
-
         Debug.Log("Buff Left : " + buffCount);
-
         return true;
     }
 
@@ -349,159 +214,67 @@ public class InventoryController : MonoBehaviour
     {
         sealCount++;
         OnInventoryChanged?.Invoke();
-
         SaveInventory();
     }
 
+    // ---- Quest keys ----
     public void CollectKey(string keyID)
     {
-        if (collectedKeys.Contains(keyID))
-            return;
-
+        if (collectedKeys.Contains(keyID)) return;
         collectedKeys.Add(keyID);
 
         switch (keyID)
         {
-            case "Key1":
-                hasKey1 = true;
-                break;
-
-            case "Key2":
-                hasKey2 = true;
-                break;
-
-            case "Key3":
-                hasKey3 = true;
-                break;
+            case "Key1": hasKey1 = true; break;
+            case "Key2": hasKey2 = true; break;
+            case "Key3": hasKey3 = true; break;
         }
 
         Debug.Log("Collected Key : " + keyID);
-
         SaveInventory();
     }
 
-    public bool HasKey(string keyID)
-    {
-        return collectedKeys.Contains(keyID);
-    }
+    public bool HasKey(string keyID) => collectedKeys.Contains(keyID);
+
+    // ---- Weapon energy usage / reload ----
     public bool UseEnergy(WeaponType weaponType, float amount)
     {
-        switch (weaponType)
-        {
-            case WeaponType.WandLevel1:
+        int i = LevelIndex(weaponType);
+        if (i < 0 || energy[i] < amount) return false;
 
-                if (level1Energy < amount)
-                    return false;
-
-                level1Energy -= amount;
-                OnInventoryChanged?.Invoke();
-                return true;
-
-            case WeaponType.WandLevel2:
-
-                if (level2Energy < amount)
-                    return false;
-
-                level2Energy -= amount;
-                OnInventoryChanged?.Invoke();
-                return true;
-
-            case WeaponType.WandLevel3:
-
-                if (level3Energy < amount)
-                    return false;
-
-                level3Energy -= amount;
-                OnInventoryChanged?.Invoke();
-                return true;
-        }
-
-        return false;
+        energy[i] -= amount;
+        OnInventoryChanged?.Invoke();
+        return true;
     }
+
     public bool ReloadEnergy(WeaponType weaponType)
     {
-        switch (weaponType)
-        {
-            case WeaponType.WandLevel1:
+        int i = LevelIndex(weaponType);
+        if (i < 0 || reserveEnergy[i] <= 0) return false;
 
-                if (level1ReserveEnergy <= 0)
-                    return false;
+        float need = 100f - energy[i];
+        float give = Mathf.Min(need, reserveEnergy[i]);
 
-                float need1 = 100f - level1Energy;
-                float give1 = Mathf.Min(need1, level1ReserveEnergy);
+        energy[i] += give;
+        reserveEnergy[i] -= give;
 
-                level1Energy += give1;
-                level1ReserveEnergy -= give1;
-
-                OnInventoryChanged?.Invoke();
-
-                Debug.Log($"Level1 Reload : {level1Energy}/100 | Reserve : {level1ReserveEnergy}");
-                return true;
-
-            case WeaponType.WandLevel2:
-
-                if (level2ReserveEnergy <= 0)
-                    return false;
-
-                float need2 = 100f - level2Energy;
-                float give2 = Mathf.Min(need2, level2ReserveEnergy);
-
-                level2Energy += give2;
-                level2ReserveEnergy -= give2;
-
-                OnInventoryChanged?.Invoke();
-
-                Debug.Log($"Level2 Reload : {level2Energy}/100 | Reserve : {level2ReserveEnergy}");
-                return true;
-
-            case WeaponType.WandLevel3:
-
-                if (level3ReserveEnergy <= 0)
-                    return false;
-
-                float need3 = 100f - level3Energy;
-                float give3 = Mathf.Min(need3, level3ReserveEnergy);
-
-                level3Energy += give3;
-                level3ReserveEnergy -= give3;
-
-                OnInventoryChanged?.Invoke();
-
-                Debug.Log($"Level3 Reload : {level3Energy}/100 | Reserve : {level3ReserveEnergy}");
-                return true;
-        }
-
-        return false;
+        OnInventoryChanged?.Invoke();
+        Debug.Log($"Level{i + 1} Reload : {energy[i]}/100 | Reserve : {reserveEnergy[i]}");
+        return true;
     }
+
     public float TakeReserveEnergy(WeaponType weaponType, float amount)
     {
-        switch (weaponType)
-        {
-            case WeaponType.WandLevel1:
+        int i = LevelIndex(weaponType);
+        if (i < 0) return 0f;
 
-                float give1 = Mathf.Min(amount, level1ReserveEnergy);
-                level1ReserveEnergy -= give1;
-                OnInventoryChanged?.Invoke();
-                return give1;
-
-            case WeaponType.WandLevel2:
-
-                float give2 = Mathf.Min(amount, level2ReserveEnergy);
-                level2ReserveEnergy -= give2;
-                OnInventoryChanged?.Invoke();
-                return give2;
-
-            case WeaponType.WandLevel3:
-
-                float give3 = Mathf.Min(amount, level3ReserveEnergy);
-                level3ReserveEnergy -= give3;
-                OnInventoryChanged?.Invoke();
-                return give3;
-        }
-
-        return 0;
+        float give = Mathf.Min(amount, reserveEnergy[i]);
+        reserveEnergy[i] -= give;
+        OnInventoryChanged?.Invoke();
+        return give;
     }
 
+    // ---- Save / Load ----
     public void SaveInventory()
     {
         PlayerData.hasKnife = HasKnife();
@@ -524,65 +297,57 @@ public class InventoryController : MonoBehaviour
 
     public void LoadInventory()
     {
-        if (!PlayerData.hasSave)
-            return;
+        if (!PlayerData.hasSave) return;
 
-        if (PlayerData.hasKnife)
-            UnlockWeapon(WeaponType.Knife);
-
-        if (PlayerData.hasWand1)
-            UnlockWeapon(WeaponType.WandLevel1);
-
-        if (PlayerData.hasWand2)
-            UnlockWeapon(WeaponType.WandLevel2);
-
-        if (PlayerData.hasWand3)
-            UnlockWeapon(WeaponType.WandLevel3);
+        if (PlayerData.hasKnife) UnlockWeapon(WeaponType.Knife);
+        if (PlayerData.hasWand1) UnlockWeapon(WeaponType.WandLevel1);
+        if (PlayerData.hasWand2) UnlockWeapon(WeaponType.WandLevel2);
+        if (PlayerData.hasWand3) UnlockWeapon(WeaponType.WandLevel3);
 
         SwitchWeapon(PlayerData.currentWeapon);
 
-        level1Energy = PlayerData.level1Energy;
-        level2Energy = PlayerData.level2Energy;
-        level3Energy = PlayerData.level3Energy;
+        energy[0] = PlayerData.level1Energy;
+        energy[1] = PlayerData.level2Energy;
+        energy[2] = PlayerData.level3Energy;
 
-        level1ReserveEnergy = PlayerData.level1Reserve;
-        level2ReserveEnergy = PlayerData.level2Reserve;
-        level3ReserveEnergy = PlayerData.level3Reserve;
+        reserveEnergy[0] = PlayerData.level1Reserve;
+        reserveEnergy[1] = PlayerData.level2Reserve;
+        reserveEnergy[2] = PlayerData.level3Reserve;
 
         OnInventoryChanged?.Invoke();
     }
 
     public void SaveCheckpointInventory()
     {
-        checkpointSnapshot = new InventorySnapshot();
+        checkpointSnapshot = new InventorySnapshot
+        {
+            level1Energy = energy[0],
+            level2Energy = energy[1],
+            level3Energy = energy[2],
 
-        checkpointSnapshot.level1Energy = level1Energy;
-        checkpointSnapshot.level2Energy = level2Energy;
-        checkpointSnapshot.level3Energy = level3Energy;
+            level1Reserve = reserveEnergy[0],
+            level2Reserve = reserveEnergy[1],
+            level3Reserve = reserveEnergy[2],
 
-        checkpointSnapshot.level1Reserve = level1ReserveEnergy;
-        checkpointSnapshot.level2Reserve = level2ReserveEnergy;
-        checkpointSnapshot.level3Reserve = level3ReserveEnergy;
-
-        checkpointSnapshot.bandages = bandageCount;
-        checkpointSnapshot.elixirs = elixirCount;
-        checkpointSnapshot.buffs = buffCount;
+            bandages = bandageCount,
+            elixirs = elixirCount,
+            buffs = buffCount
+        };
 
         Debug.Log("Checkpoint Inventory Saved");
     }
 
     public void RestoreCheckpointInventory()
     {
-        if (checkpointSnapshot == null)
-            return;
+        if (checkpointSnapshot == null) return;
 
-        level1Energy = checkpointSnapshot.level1Energy;
-        level2Energy = checkpointSnapshot.level2Energy;
-        level3Energy = checkpointSnapshot.level3Energy;
+        energy[0] = checkpointSnapshot.level1Energy;
+        energy[1] = checkpointSnapshot.level2Energy;
+        energy[2] = checkpointSnapshot.level3Energy;
 
-        level1ReserveEnergy = checkpointSnapshot.level1Reserve;
-        level2ReserveEnergy = checkpointSnapshot.level2Reserve;
-        level3ReserveEnergy = checkpointSnapshot.level3Reserve;
+        reserveEnergy[0] = checkpointSnapshot.level1Reserve;
+        reserveEnergy[1] = checkpointSnapshot.level2Reserve;
+        reserveEnergy[2] = checkpointSnapshot.level3Reserve;
 
         bandageCount = checkpointSnapshot.bandages;
         elixirCount = checkpointSnapshot.elixirs;
@@ -591,11 +356,8 @@ public class InventoryController : MonoBehaviour
         OnInventoryChanged?.Invoke();
 
         WeaponController weapon = GetComponent<WeaponController>();
-
         if (weapon != null)
-        {
             weapon.RefreshWeapon();
-        }
 
         Debug.Log("Checkpoint Inventory Restored");
     }
